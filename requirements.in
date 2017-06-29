@@ -1,0 +1,19 @@
+# Django
+Django
+
+# Settings
+django-environ
+
+# PostgreSQL
+psycopg2
+
+# Django REST Framework
+djangorestframework
+djangorestframework-gis
+
+# Translations
+django-parler
+django-parler-rest
+
+# Municipalities
+django-munigeo

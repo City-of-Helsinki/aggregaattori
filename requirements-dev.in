@@ -1,0 +1,8 @@
+-c requirements.txt
+django-extensions
+flake8
+ipython
+prequ
+pytest
+pytest-cov
+pytest-django
