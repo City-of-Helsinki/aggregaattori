@@ -16,6 +16,10 @@ class Story(TranslatableModel):
         ),
     )
 
+    external_id = models.CharField(
+        max_length=255,
+        blank=True,
+    )
     url = models.URLField(
         verbose_name=_('URL'),
         blank=True,
