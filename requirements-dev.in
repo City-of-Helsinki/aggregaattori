@@ -2,6 +2,7 @@
 django-extensions
 flake8
 ipython
+isort
 prequ
 pytest
 pytest-cov
