@@ -1,4 +1,6 @@
 from rest_framework import routers, serializers, viewsets
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 from parler_rest.serializers import (
     TranslatableModelSerializer,
     TranslatedFieldsField,
@@ -33,15 +35,29 @@ class APIRouter(routers.DefaultRouter):
             self._register_view(view)
 
 
-class StorySerializer(TranslatableModelSerializer):
-    translations = TranslatedFieldsField(shared_model=Story)
+class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
+    translations = TranslatedFieldsField(
+        shared_model=Story,
+    )
+
+    external_id = serializers.CharField(
+        max_length=255,
+        allow_blank=False,
+    )
+
+    url = serializers.CharField(
+        max_length=255,
+        required=False,
+        allow_blank=True,
+    )
 
     class Meta:
         model = Story
-        fields = ('id', 'url', 'location', 'translations')
+        fields = ('id', 'external_id', 'url', 'location', 'translations')
+        geo_field = 'location'
 
 
-class StoryViewSet(viewsets.ReadOnlyModelViewSet):
+class StoryViewSet(viewsets.ModelViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
 
