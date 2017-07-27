@@ -14,14 +14,14 @@ class Story(TranslatableModel):
             verbose_name=_('Text'),
             blank=True,
         ),
+        url=models.URLField(
+            verbose_name=_('URL'),
+            blank=True,
+        )
     )
 
     external_id = models.CharField(
         max_length=255,
-        blank=True,
-    )
-    url = models.URLField(
-        verbose_name=_('URL'),
         blank=True,
     )
     location = models.GeometryField(
