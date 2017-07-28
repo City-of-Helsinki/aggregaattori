@@ -54,6 +54,7 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
 class StoryViewSet(viewsets.ModelViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    lookup_field = 'external_id'
 
 
 register_view(StoryViewSet, 'story')
