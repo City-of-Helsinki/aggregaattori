@@ -14,6 +14,10 @@ class Story(TranslatableModel):
             verbose_name=_('Text'),
             blank=True,
         ),
+        short_text=models.TextField(
+            verbose_name=_('Short text'),
+            blank=True,
+        ),
         url=models.URLField(
             verbose_name=_('URL'),
             blank=True,
@@ -23,8 +27,6 @@ class Story(TranslatableModel):
     external_id = models.CharField(
         max_length=255,
         unique=True,
-        null=True,
-        blank=True,
     )
     location = models.GeometryField(
         verbose_name=_('Location'),
