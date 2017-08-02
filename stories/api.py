@@ -72,7 +72,14 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
 
     class Meta:
         model = Story
-        fields = ('id', 'external_id', 'keywords', 'location', 'translations')
+        fields = (
+            'id',
+            'external_id',
+            'keywords',
+            'location',
+            'location_id',
+            'translations',
+        )
         geo_field = 'location'
 
 
