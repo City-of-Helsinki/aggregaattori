@@ -8,7 +8,7 @@ class Story(TranslatableModel):
     translations = TranslatedFields(
         title=models.CharField(
             verbose_name=_('Title'),
-            max_length=100,
+            max_length=255,
         ),
         text=models.TextField(
             verbose_name=_('Text'),
