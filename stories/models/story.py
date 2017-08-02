@@ -35,6 +35,10 @@ class Story(TranslatableModel):
         null=True,
         blank=True,
     )
+    location_id = models.CharField(
+        max_length=255,
+        blank=True,
+    )
     keywords = models.ManyToManyField(
         Keyword,
         related_name='stories',
