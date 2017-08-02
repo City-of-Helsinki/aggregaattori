@@ -3,6 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
 from parler.models import TranslatableModel, TranslatedFields
 
+from .keyword import Keyword
+
 
 class Story(TranslatableModel):
     translations = TranslatedFields(
@@ -31,6 +33,11 @@ class Story(TranslatableModel):
     location = models.GeometryField(
         verbose_name=_('Location'),
         null=True,
+        blank=True,
+    )
+    keywords = models.ManyToManyField(
+        Keyword,
+        related_name='stories',
         blank=True,
     )
 
