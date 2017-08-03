@@ -57,6 +57,7 @@ def get_location(place_url):
         locations[place_url] = (location_id, position)
         return location_id, position
 
+
 def get_keywords(keyword_urls):
     '''For now just get the id from the url directly.'''
     ids = []
@@ -64,10 +65,12 @@ def get_keywords(keyword_urls):
         ids.append(url_to_id(keyword_url['@id']))
     return ids
 
+
 def url_to_id(url):
     parts = urllib.parse.urlparse(url)
     path = parts[2].split('/')
     return path[-2]
+
 
 class LinkedeventsImporter:
     own_url = 'http://127.0.0.1:8000/v1/story/'
