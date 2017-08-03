@@ -73,7 +73,6 @@ def url_to_id(url):
 
 
 class LinkedeventsImporter:
-    own_url = 'http://127.0.0.1:8000/v1/story/'
 
     count = 0
     processed = 0
@@ -85,7 +84,8 @@ class LinkedeventsImporter:
         '&page_size=%s'
     ) % (page_size)
 
-    def __init__(self):
+    def __init__(self, address):
+        self.own_url = address
 
         while self.target:
             try:

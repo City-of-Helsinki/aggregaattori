@@ -4,5 +4,15 @@ from stories.importers import LinkedeventsImporter
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'address',
+            type=str,
+            help=(
+                'The address of the server where stories are PUT.'
+                ' Example: http://127.0.0.1:8000/v1/story/'
+            ),
+        )
+
     def handle(self, *args, **options):
-        LinkedeventsImporter()
+        LinkedeventsImporter(options['address'])
