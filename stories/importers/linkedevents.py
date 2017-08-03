@@ -1,29 +1,28 @@
 import json
 import urllib.parse
+from django.conf import settings
 
 import requests
 
-LANGUAGES = ['en', 'fi', 'sv']
 
-
-def safe_get(event, attribute, language):
+def safe_get(event, attribute, language_code):
     field = event.get(attribute)
 
     if field is None:
         return None
-    return field.get(language)
+    return field.get(language_code)
 
 
 def progress(total, remaining):
     print('%.2f%%' % (total/remaining*100))
 
 
-def get_translations(language, event):
+def get_translations(language_code, event):
     translations = {}
-    title = safe_get(event, 'name', language)
-    text = safe_get(event, 'description', language)
-    short_text = safe_get(event, 'short_description', language)
-    url = safe_get(event, 'info_url', language)
+    title = safe_get(event, 'name', language_code)
+    text = safe_get(event, 'description', language_code)
+    short_text = safe_get(event, 'short_description', language_code)
+    url = safe_get(event, 'info_url', language_code)
 
     if title is None and text is None and url is None:
         return None
@@ -111,10 +110,10 @@ class LinkedeventsImporter:
         position = None
         keywords = None
 
-        for language in LANGUAGES:
-            current_translations = get_translations(language, event)
+        for language_code, language_name in settings.LANGUAGES:
+            current_translations = get_translations(language_code, event)
             if current_translations is not None:
-                translations[language] = current_translations
+                translations[language_code] = current_translations
 
         if event['location'] is not None:
             location_id, position = get_location(event['location']['@id'])
