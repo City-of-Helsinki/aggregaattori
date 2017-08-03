@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+from django.utils.translation import ugettext_lazy as _
 from environ import Env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -123,6 +124,23 @@ USE_L10N = True
 
 USE_TZ = True
 
+LANGUAGES = (
+    ('en', _('English')),
+    ('fi', _('Finnish')),
+    ('sv', _('Swedish')),
+)
+
+PARLER_LANGUAGES = {
+    None: (
+        {'code': 'en'},
+        {'code': 'fi'},
+        {'code': 'sv'},
+    ),
+    'default': {
+        'fallback': 'en',
+        'hide_untranslated': False,
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
