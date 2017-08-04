@@ -95,7 +95,7 @@ class LinkedeventsImporter:
             self.target = events['meta']['next']
             self.count = events['meta']['count']
 
-            for event in events['data'][:1]:
+            for event in events['data']:
                 status = self.process_event(event)
                 if status not in [200, 201]:
                     print("Status code not OK or CREATED: %s" % str(status))
