@@ -26,6 +26,10 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
+# Email settings
+EMAIL_FROM_NAME = env('EMAIL_FROM_NAME')
+EMAIL_FROM_ADDRESS = env('EMAIL_FROM_ADDRESS')
+
 # Application definition
 
 INSTALLED_APPS = [
