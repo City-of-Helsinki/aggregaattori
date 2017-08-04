@@ -99,6 +99,7 @@ class LinkedeventsImporter:
                 status = self.process_event(event)
                 if status not in [200, 201]:
                     print("Status code not OK or CREATED: %s" % str(status))
+                    self.target = None
                     break
                 self.processed = self.processed + 1
                 progress(self.processed, self.count)
