@@ -1,3 +1,6 @@
+import json
+
+import requests
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -67,14 +70,14 @@ class Story(TranslatableModel):
         for keyword in self.keywords.all():
             ysos.append(keyword.yso)
 
-        # YSOs would be sent to the server, user UUIDs would be returned
+        url = '%s/interested/' % (settings.TUNNISTAMO_URL)
 
-        # Until the service comes online it is mocked here.
-        import uuid
-        fake_uuids = []
-        for i in range(3):
-            fake_uuids.append(str(uuid.uuid4()))
-        return fake_uuids
+        params = {
+            'division': self.ocd_id,
+            'yso': ','.join(ysos),
+        }
+
+        return requests.get(url, params=params).json()
 
     def create_message(instance, user_uuids):
         recipients = []
@@ -111,8 +114,20 @@ class Story(TranslatableModel):
 
     def send(self, address):
         message = self.create_message(self.get_interested_users())
-        # TODO serialize the message and send it to the messaging service and
-        # set the sent boolean to true upon success.
+
+        r = requests.post(
+            address,
+            data=json.dumps(message),
+            headers={'Content-type': 'application/json'},
+            auth=(settings.EMAIL_AUTH_NAME, settings.EMAIL_AUTH_PASS),
+        )
+
+        if r.status_code == 201:
+            self.sent == True
+            self.save()
+            return True
+        else:
+            return False
 
     def set_ocd_id(self):
         if self.location is None:
