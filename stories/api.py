@@ -70,6 +70,11 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
         required=False,
     )
 
+    ocd_id = serializers.CharField(
+        read_only=True,
+        required=False,
+    )
+
     class Meta:
         model = Story
         fields = (
@@ -78,6 +83,7 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
             'keywords',
             'location',
             'location_id',
+            'ocd_id',
             'translations',
         )
         geo_field = 'location'

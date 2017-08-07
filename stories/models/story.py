@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
+from munigeo.models import AdministrativeDivision
 from parler.models import TranslatableModel, TranslatedFields
 
 from .keyword import Keyword
@@ -112,3 +113,19 @@ class Story(TranslatableModel):
         message = self.create_message(self.get_interested_users())
         # TODO serialize the message and send it to the messaging service and
         # set the sent boolean to true upon success.
+
+    def set_ocd_id(self):
+        if self.location is None:
+            return
+
+        divisions = AdministrativeDivision.objects.filter(
+            geometry__boundary__contains=self.location,
+        )
+
+        for division in divisions:
+            if division.type.type == 'district':
+                self.ocd_id = division.ocd_id
+
+    def save(self, *args, **kwargs):
+        self.set_ocd_id()
+        super().save(*args, **kwargs)
