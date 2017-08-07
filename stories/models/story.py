@@ -123,7 +123,7 @@ class Story(TranslatableModel):
         )
 
         if r.status_code == 201:
-            self.sent == True
+            self.sent = True
             self.save()
             return True
         else:
