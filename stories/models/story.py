@@ -79,15 +79,15 @@ class Story(TranslatableModel):
 
         return requests.get(url, params=params).json()
 
-    def create_message(instance, user_uuids):
+    def create_message(self, user_uuids):
         recipients = []
         for user_uuid in user_uuids:
             recipients.append({'uuid': user_uuid})
 
         def translate_field(name, code):
-            return instance.safe_translation_getter(
+            return self.safe_translation_getter(
                 name,
-                language_code=language_code,
+                language_code=code,
             )
 
         def add_template(text):
@@ -95,7 +95,7 @@ class Story(TranslatableModel):
             return "<p>%s</p>" % text
 
         contents = []
-        for language_code, language_name in settings.LANGUAGES:
+        for language_code, _ in settings.LANGUAGES:
             contents.append({
                 'language': language_code,
                 'subject': translate_field('title', language_code),
@@ -115,19 +115,19 @@ class Story(TranslatableModel):
     def send(self, address):
         message = self.create_message(self.get_interested_users())
 
-        r = requests.post(
+        response = requests.post(
             address,
             data=json.dumps(message),
             headers={'Content-type': 'application/json'},
             auth=(settings.EMAIL_AUTH_NAME, settings.EMAIL_AUTH_PASS),
         )
 
-        if r.status_code == 201:
-            self.sent = True
-            self.save()
-            return True
-        else:
+        if response.status_code != 201:
             return False
+
+        self.sent = True
+        self.save()
+        return True
 
     def set_ocd_id(self):
         if self.location is None:

@@ -42,21 +42,6 @@ def get_translations(language_code, event):
     return translations
 
 
-locations = {}
-
-
-def get_location(place_url):
-    if place_url in locations:
-        return locations[place_url]
-    else:
-        place = requests.get(place_url, params={'format': 'json'}).json()
-        position = place['position']
-        location_id = place['id']
-
-        locations[place_url] = (location_id, position)
-        return location_id, position
-
-
 def get_keywords(keyword_urls):
     '''For now just get the id from the url directly.'''
     ids = []
@@ -77,6 +62,8 @@ class LinkedeventsImporter:
     processed = 0
     page_size = 100
 
+    locations = {}
+
     target = (
         'https://api.hel.fi/linkedevents/v1/event/'
         '?format=json'
@@ -89,8 +76,8 @@ class LinkedeventsImporter:
         while self.target:
             try:
                 events = requests.get(url=self.target).json()
-            except requests.exceptions.RequestException as e:
-                print(e)
+            except requests.exceptions.RequestException as ex:
+                print(ex)
                 break
             self.target = events['meta']['next']
             self.count = events['meta']['count']
@@ -111,13 +98,13 @@ class LinkedeventsImporter:
         position = None
         keywords = None
 
-        for language_code, language_name in settings.LANGUAGES:
+        for language_code, _ in settings.LANGUAGES:
             current_translations = get_translations(language_code, event)
             if current_translations is not None:
                 translations[language_code] = current_translations
 
         if event['location'] is not None:
-            location_id, position = get_location(event['location']['@id'])
+            location_id, position = self.get_location(event['location']['@id'])
 
         if event['keywords'] is not None:
             keywords = get_keywords(event['keywords'])
@@ -129,9 +116,20 @@ class LinkedeventsImporter:
             'translations': translations,
         })
 
-        r = requests.put(
+        response = requests.put(
             self.own_url + external_id + '/',
             data=json_event,
             headers={'Content-type': 'application/json'},
         )
-        return r.status_code
+        return response.status_code
+
+    def get_location(self, place_url):
+        if place_url in self.locations:
+            return self.locations[place_url]
+
+        place = requests.get(place_url, params={'format': 'json'}).json()
+        position = place['position']
+        location_id = place['id']
+
+        self.locations[place_url] = (location_id, position)
+        return location_id, position

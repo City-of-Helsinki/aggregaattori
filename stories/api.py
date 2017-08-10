@@ -47,7 +47,7 @@ class KeywordsField(serializers.RelatedField):
         '''Returns a list of primary keys of the keywords.'''
         pks = []
         for yso_id in yso_ids:
-            keyword, created = Keyword.objects.get_or_create(
+            keyword, _ = Keyword.objects.get_or_create(
                 yso=yso_id,
             )
             pks.append(keyword.pk)
@@ -89,11 +89,9 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
         geo_field = 'location'
 
 
-class StoryViewSet(
-    generics.RetrieveUpdateDestroyAPIView,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet,
-):
+class StoryViewSet(generics.RetrieveUpdateDestroyAPIView, mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+
     queryset = Story.objects.all()
     serializer_class = StorySerializer
     lookup_field = 'external_id'
@@ -101,15 +99,14 @@ class StoryViewSet(
     # changing get_object.
     created = False
 
-    def get_object(self, *args, **kwargs):
+    def get_object(self):
         if self.request.method == 'PUT':
             story, created = Story.objects.get_or_create(
                 external_id=self.kwargs.get('external_id'),
             )
             self.created = created
             return story
-        else:
-            return super().get_object()
+        return super().get_object()
 
     def update(self, request, external_id=None, pk=None):
         response = super().update(request, external_id, pk)
