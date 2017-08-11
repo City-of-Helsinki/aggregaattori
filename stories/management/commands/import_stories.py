@@ -13,6 +13,14 @@ class Command(BaseCommand):
                 ' Example: http://127.0.0.1:8000/v1/story/'
             ),
         )
+        parser.add_argument(
+            '--progress',
+            default=False,
+            action='store_true',
+            dest='progress',
+            help='Show progress percentage',
+        )
+
 
     def handle(self, *args, **options):
-        LinkedeventsImporter(options['address'])
+        LinkedeventsImporter(options['address'], progress=options['progress'])

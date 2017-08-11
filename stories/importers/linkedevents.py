@@ -13,8 +13,8 @@ def safe_get(event, attribute, language_code):
     return field.get(language_code)
 
 
-def progress(total, remaining):
-    print('%.2f%%' % (total/remaining*100))
+def show_progress(total, remaining):
+    print('\r%.2f%%' % (total/remaining*100), end='')
 
 
 def get_translations(language_code, event):
@@ -70,7 +70,7 @@ class LinkedeventsImporter:
         '&page_size=%s'
     ) % (page_size)
 
-    def __init__(self, address):
+    def __init__(self, address, progress=False):
         self.own_url = address
 
         while self.target:
@@ -89,7 +89,8 @@ class LinkedeventsImporter:
                     self.target = None
                     break
                 self.processed = self.processed + 1
-                progress(self.processed, self.count)
+                if progress:
+                    show_progress(self.processed, self.count)
 
     def process_event(self, event):
         external_id = event['id']
