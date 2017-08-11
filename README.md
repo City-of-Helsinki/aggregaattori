@@ -21,10 +21,11 @@ aggregaattori runs on PostgreSQL. Install the server on Debian-based systems wit
 sudo apt install postgresql
 ```
 
-Then create a database user and the database itself as the `postgres` system user:
+Then create a database user with permission to create databases and the
+database itself as the `postgres` system user:
 
 ```bash
-sudo -u postgres createuser -P -R -S aggregaattori
+sudo -u postgres createuser -d -P -R -S aggregaattori
 sudo -u postgres createdb -l fi_FI.UTF8 -E UTF8 -T template0 -O aggregaattori aggregaattori
 sudo -u postgres psql aggregaattori -c "CREATE EXTENSION postgis;"
 ```
