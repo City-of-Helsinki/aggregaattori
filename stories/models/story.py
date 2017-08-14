@@ -39,10 +39,6 @@ class Story(TranslatableModel):
         null=True,
         blank=True,
     )
-    location_id = models.CharField(
-        max_length=255,
-        blank=True,
-    )
     ocd_id = models.CharField(
         max_length=255,
         blank=True,

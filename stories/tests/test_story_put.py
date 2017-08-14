@@ -18,7 +18,6 @@ class TestStoryPut:
             "yso:p8471"
         ],
         "ocd_id": "test",
-        "location_id": "test:4321",
         "translations": {
             "en": {
                 "title":"English test title",
@@ -49,7 +48,6 @@ class TestStoryPut:
         )
 
         modified_story = self.story.copy()
-        modified_story['location_id'] = 'test:2345'
 
         response = self.client.put(
             self.url,
@@ -71,7 +69,6 @@ class TestStoryPut:
         response_story = response.json()
 
         assert response_story['properties']['external_id'] == 'test:1234'
-        assert response_story['properties']['location_id'] == 'test:4321'
         assert response_story['properties']['keywords'] == ["yso:p8471"]
 
         assert response.status_code == 200

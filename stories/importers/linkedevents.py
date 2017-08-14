@@ -95,7 +95,6 @@ class LinkedeventsImporter:
     def process_event(self, event):
         external_id = event['id']
         translations = {}
-        location_id = None
         position = None
         keywords = None
 
@@ -105,13 +104,12 @@ class LinkedeventsImporter:
                 translations[language_code] = current_translations
 
         if event['location'] is not None:
-            location_id, position = self.get_location(event['location']['@id'])
+            position = self.get_location(event['location']['@id'])
 
         if event['keywords'] is not None:
             keywords = get_keywords(event['keywords'])
 
         json_event = json.dumps({
-            'location_id': location_id,
             'location': position,
             'keywords': keywords,
             'translations': translations,
@@ -130,7 +128,6 @@ class LinkedeventsImporter:
 
         place = requests.get(place_url, params={'format': 'json'}).json()
         position = place['position']
-        location_id = place['id']
 
-        self.locations[place_url] = (location_id, position)
-        return location_id, position
+        self.locations[place_url] = position
+        return position

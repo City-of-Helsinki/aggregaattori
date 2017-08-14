@@ -82,7 +82,6 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
             'external_id',
             'keywords',
             'location',
-            'location_id',
             'ocd_id',
             'translations',
         )
