@@ -1,12 +1,9 @@
+from parler_rest.serializers import (TranslatableModelSerializer,
+                                     TranslatedFieldsField)
 from rest_framework import generics, mixins, routers, serializers, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from parler_rest.serializers import (
-    TranslatableModelSerializer,
-    TranslatedFieldsField,
-)
-
-from .models import Story, Keyword
+from .models import Keyword, Story
 
 all_views = []
 

@@ -1,8 +1,8 @@
 import json
 import urllib.parse
-from django.conf import settings
 
 import requests
+from django.conf import settings
 
 
 def safe_get(event, attribute, language_code):
