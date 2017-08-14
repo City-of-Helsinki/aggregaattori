@@ -15,6 +15,7 @@ class Story(TranslatableModel):
         title=models.CharField(
             verbose_name=_('Title'),
             max_length=255,
+            blank=True,
         ),
         text=models.TextField(
             verbose_name=_('Text'),
