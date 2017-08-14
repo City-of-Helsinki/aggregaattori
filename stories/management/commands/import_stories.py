@@ -21,6 +21,5 @@ class Command(BaseCommand):
             help='Show progress percentage',
         )
 
-
     def handle(self, *args, **options):
         LinkedeventsImporter(options['address'], progress=options['progress'])

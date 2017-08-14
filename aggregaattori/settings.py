@@ -30,8 +30,8 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 EMAIL_FROM_NAME = env('EMAIL_FROM_NAME')
 EMAIL_FROM_ADDRESS = env('EMAIL_FROM_ADDRESS')
 
-EMAIL_AUTH_NAME=env('EMAIL_AUTH_NAME')
-EMAIL_AUTH_PASS=env('EMAIL_AUTH_PASS')
+EMAIL_AUTH_NAME = env('EMAIL_AUTH_NAME')
+EMAIL_AUTH_PASS = env('EMAIL_AUTH_PASS')
 
 # User IDs are fetched from here
 TUNNISTAMO_URL = env('TUNNISTAMO_URL')
@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'aggregaattori.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-default_database_url = 'postgis://aggregaattori:aggregaattori@localhost/aggregaattori'
+default_database_url = env('DATABASE_URL')
 
 DATABASES = {
     'default': env.db_url(
@@ -177,7 +177,7 @@ if 'SECRET_KEY' not in locals():
         import random
         system_random = random.SystemRandom()
         try:
-            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)])
+            SECRET_KEY = ''.join([system_random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(64)]) # noqa
             secret = open(secret_file, 'w')
             os.chmod(secret_file, 0o0600)
             secret.write(SECRET_KEY)

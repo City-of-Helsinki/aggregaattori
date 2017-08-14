@@ -1,1 +1,1 @@
-from .linkedevents import LinkedeventsImporter
+from .linkedevents import LinkedeventsImporter # noqa

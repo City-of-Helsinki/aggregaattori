@@ -9,8 +9,10 @@ from stories.models import Story
 class StoryAdmin(OSMGeoAdmin, TranslatableAdmin):
     pass
 
+
 class AdministrativeDivisionGeometryAdmin(OSMGeoAdmin):
     pass
+
 
 admin.site.register(Story, StoryAdmin)
 admin.site.register(AdministrativeDivisionGeometry, AdministrativeDivisionGeometryAdmin)

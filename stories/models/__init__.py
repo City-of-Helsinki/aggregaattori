@@ -1,2 +1,2 @@
-from .story import Story
-from .keyword import Keyword
+from .story import Story # noqa
+from .keyword import Keyword # noqa

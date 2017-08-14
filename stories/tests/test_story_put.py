@@ -20,7 +20,7 @@ class TestStoryPut:
         "ocd_id": "test",
         "translations": {
             "en": {
-                "title":"English test title",
+                "title": "English test title",
                 "short_text": "Short text.",
                 "text": "English test text.",
                 "url": "http://example.org/en"
