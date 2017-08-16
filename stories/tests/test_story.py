@@ -2,11 +2,12 @@ import pytest
 from rest_framework.test import APIClient
 
 
-class TestStoryPut:
+class TestStory:
     client = APIClient()
-    url = 'http://testserver/v1/story/test:1234/'
+    url = 'http://testserver/v1/story/'
 
     story = {
+        "external_id": "test:1234",
         "location": {
             "type": "Point",
             "coordinates": [
@@ -15,9 +16,10 @@ class TestStoryPut:
             ]
         },
         "keywords": [
-            "yso:p8471"
+            "yso:p8471",
+            "yso:p26360"
         ],
-        "ocd_id": "test",
+        "ocd_id": "This should be overridden",
         "translations": {
             "en": {
                 "title": "English test title",
@@ -29,9 +31,9 @@ class TestStoryPut:
     }
 
     @pytest.mark.django_db
-    def test__put_create(self):
+    def test__post(self):
 
-        response = self.client.put(
+        response = self.client.post(
             self.url,
             self.story,
             format='json',
@@ -40,17 +42,22 @@ class TestStoryPut:
         assert response.status_code == 201
 
     @pytest.mark.django_db
-    def test__put_modify(self):
-        response = self.client.put(
+    def test__put(self):
+
+        response = self.client.post(
             self.url,
             self.story,
             format='json',
         )
 
+        story = response.json()
+
+        assert response.status_code == 201
+
         modified_story = self.story.copy()
 
         response = self.client.put(
-            self.url,
+            self.url + str(story['id']) + '/',
             modified_story,
             format='json',
         )
@@ -58,17 +65,21 @@ class TestStoryPut:
         assert response.status_code == 200
 
     @pytest.mark.django_db
-    def test__put_and_get_story(self):
-        response = self.client.put(
+    def test__put_changes_content(self):
+        response = self.client.post(
             self.url,
             self.story,
             format='json',
         )
+        story = response.json()
 
-        response = self.client.get(self.url)
+        response = self.client.get(self.url + str(story['id']) + '/')
         response_story = response.json()
 
         assert response_story['properties']['external_id'] == 'test:1234'
-        assert response_story['properties']['keywords'] == ["yso:p8471"]
+        assert response_story['properties']['keywords'] == [
+            "yso:p8471",
+            "yso:p26360",
+        ]
 
         assert response.status_code == 200
