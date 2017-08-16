@@ -1,3 +1,4 @@
+import logging
 import json
 import urllib.parse
 
@@ -61,6 +62,9 @@ class LinkedeventsImporter:
     count = 0
     processed = 0
     page_size = 100
+    errors = 0
+
+    logger = logging.getLogger(__name__)
 
     locations = {}
 
@@ -77,20 +81,30 @@ class LinkedeventsImporter:
             try:
                 events = requests.get(url=self.target).json()
             except requests.exceptions.RequestException as ex:
-                print(ex)
+                self.logger.error(ex)
                 break
             self.target = events['meta']['next']
             self.count = events['meta']['count']
 
             for event in events['data']:
-                status = self.process_event(event)
-                if status not in [200, 201]:
-                    print("Status code not OK or CREATED: %s" % str(status))
-                    self.target = None
-                    break
+                response = self.process_event(event)
+                if response.status_code not in [200, 201]:
+                    self.logger.error(
+                        'Error while importing %s: %s',
+                        event['id'],
+                        response.text,
+                    )
+                    self.errors = self.errors + 1
+
                 self.processed = self.processed + 1
                 if progress:
                     show_progress(self.processed, self.count)
+
+        self.logger.info(
+            'Import done: %s processed, %s errors',
+            self.processed,
+            self.errors,
+        )
 
     def process_event(self, event):
         external_id = event['id']
@@ -120,7 +134,7 @@ class LinkedeventsImporter:
             data=json_event,
             headers={'Content-type': 'application/json'},
         )
-        return response.status_code
+        return response
 
     def get_location(self, place_url):
         if place_url in self.locations:
