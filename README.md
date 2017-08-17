@@ -1,4 +1,4 @@
-[![Build status](https://travis-ci.org/City-of-Helsinki/aggregaattori.svg)](https://travis-ci.org/City-of-Helsinki/aggregaattori)
+[![Build status](https://travis-ci.org/City-of-Helsinki/aggregaattori.svg?branch=master)](https://travis-ci.org/City-of-Helsinki/aggregaattori)
 [![codecov](https://codecov.io/gh/City-of-Helsinki/aggregaattori/branch/master/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/aggregaattori)
 [![Requirements](https://requires.io/github/City-of-Helsinki/aggregaattori/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/aggregaattori/requirements/?branch=master)
 
