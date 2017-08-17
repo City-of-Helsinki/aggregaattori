@@ -1,6 +1,6 @@
 from parler_rest.serializers import (TranslatableModelSerializer,
                                      TranslatedFieldsField)
-from rest_framework import generics, mixins, routers, serializers, viewsets
+from rest_framework import mixins, routers, serializers, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from .models import Keyword, Story
@@ -85,30 +85,12 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
         geo_field = 'location'
 
 
-class StoryViewSet(generics.RetrieveUpdateDestroyAPIView, mixins.ListModelMixin,
-                   viewsets.GenericViewSet):
+class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin, mixins.DestroyModelMixin,
+                   mixins.ListModelMixin, viewsets.GenericViewSet):
 
     queryset = Story.objects.all()
     serializer_class = StorySerializer
-    lookup_field = 'external_id'
-    # This is needed to let get_object tell update about creation without
-    # changing get_object.
-    created = False
-
-    def get_object(self):
-        if self.request.method == 'PUT':
-            story, created = Story.objects.get_or_create(
-                external_id=self.kwargs.get('external_id'),
-            )
-            self.created = created
-            return story
-        return super().get_object()
-
-    def update(self, request, external_id=None, pk=None):
-        response = super().update(request, external_id, pk)
-        if self.created and response.status_code == 200:
-            response.status_code = 201
-        return response
 
 
 register_view(StoryViewSet, 'story')
