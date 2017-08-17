@@ -35,6 +35,9 @@ class Story(TranslatableModel):
         max_length=255,
         unique=True,
     )
+    type = models.CharField(
+        max_length=32,
+    )
     location = models.GeometryField(
         verbose_name=_('Location'),
         null=True,
