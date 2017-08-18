@@ -1,0 +1,60 @@
+{
+    "meta": {
+        "count": 1,
+        "next": null,
+        "previous": null
+    },
+    "data": {
+        "id": "linkedevents:test-1234",
+        "location": {
+            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:7254/"
+        },
+        "keywords": [
+            {
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p8471/"
+            },
+            {
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p26360/"
+            }
+        ],
+        "super_event": null,
+        "event_status": "EventScheduled",
+        "external_links": [],
+        "offers": [
+            {
+                "is_free": true,
+                "description": null,
+                "info_url": null,
+                "price": null
+            }
+        ],
+        "data_source": "test",
+        "publisher": "test:publisher",
+        "sub_events": null,
+        "in_language": [],
+        "audience": [],
+        "custom_data": null,
+        "created_time": null,
+        "last_modified_time": "2017-08-18T08:13:29.050780Z",
+        "date_published": null,
+        "start_time": "2017-09-21T13:00:00Z",
+        "end_time": "2017-11-23T18:00:00Z",
+        "super_event_type": "recurring",
+        "short_description": {
+            "fi": "Lörem ipsum dölör sit ämåt, consectetur adipiscing elit."
+        },
+        "description": {
+            "fi": "Lörem ipsum dölör sit ämåt, consectetur adipiscing elit. Donec interdum urna est, eget mollis libero facilisis eu. Nullam pulvinar bibendum sem, in mollis erat accumsan a. Integer odio mauris, tempus vitae porttitor quis, sodales in orci. Vestibulum efficitur elementum sodales. Duis blandit turpis massa, quis efficitur elit ornare nec. Nullam quis ipsum sit amet mi sollicitudin iaculis. Nam pharetra ex ornare pulvinar dapibus."
+        },
+        "name": {
+            "fi": "Lörem ipsum dölör sit ämåt"
+        },
+        "location_extra_info": null,
+        "provider": null,
+        "info_url": null,
+        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/",
+        "@context": "http://schema.org",
+        "@type": "Event/LinkedEvent",
+        "images": []
+    }
+}
