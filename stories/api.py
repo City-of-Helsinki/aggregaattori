@@ -51,7 +51,7 @@ class KeywordsField(serializers.RelatedField):
         return pks
 
 
-class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
+class StorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(
         shared_model=Story,
     )
@@ -78,11 +78,10 @@ class StorySerializer(TranslatableModelSerializer, GeoFeatureModelSerializer):
             'id',
             'external_id',
             'keywords',
-            'location',
+            'locations',
             'ocd_id',
             'translations',
         )
-        geo_field = 'location'
 
 
 class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
