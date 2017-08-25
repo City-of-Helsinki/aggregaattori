@@ -76,8 +76,8 @@ class TestStory:
         response = self.client.get(self.url + str(story['id']) + '/')
         response_story = response.json()
 
-        assert response_story['properties']['external_id'] == 'test:1234'
-        assert response_story['properties']['keywords'] == [
+        assert response_story['external_id'] == 'test:1234'
+        assert response_story['keywords'] == [
             "yso:p8471",
             "yso:p26360",
         ]
