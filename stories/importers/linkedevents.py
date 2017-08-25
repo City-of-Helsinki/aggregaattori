@@ -1,9 +1,25 @@
+# -*- coding: utf-8 -*-
+
+import datetime
 import logging
-import json
-import urllib.parse
 
 import requests
 from django.conf import settings
+
+from stories.importers.base import BaseAPIConsumer
+
+
+def get_any_language(dictionary, preferred):
+    if dictionary is None:
+        return ''
+
+    if dictionary.get(preferred):
+        return dictionary.get(preferred)
+
+    for language_code, _ in settings.LANGUAGES:
+        if dictionary.get(language_code):
+            return dictionary.get(language_code)
+    return ''
 
 
 def safe_get(event, attribute, language_code):
@@ -14,134 +30,139 @@ def safe_get(event, attribute, language_code):
     return field.get(language_code)
 
 
-def show_progress(total, remaining):
-    print('\r%.2f%%' % (total/remaining*100), end='')
+def get_tags(event):
+    tags = []
+    for keyword in event['keywords']:
+        tags.append({
+            'id': keyword['@id'],
+            'nameMap': keyword['name'],
+        })
+    return tags
 
 
-def get_translations(language_code, event):
-    translations = {}
-    title = safe_get(event, 'name', language_code)
-    text = safe_get(event, 'description', language_code)
-    short_text = safe_get(event, 'short_description', language_code)
-    url = safe_get(event, 'info_url', language_code)
+def get_last_modified():
+    # Placeholder for getting the timestamp of the last import
+    return datetime.date.today() - datetime.timedelta(days=1)
 
-    if title is None and text is None and url is None:
+
+def get_location(event):
+    if event['location'] is None:
         return None
 
-    if title is not None:
-        translations['title'] = title
+    location = event['location']
+    coordinates = None
 
-    if text is not None:
-        translations['text'] = text
+    if location['position']:
+        coordinates = location['position']['coordinates']
 
-    if short_text is not None:
-        translations['short_text'] = short_text
-
-    if url is not None:
-        translations['url'] = url
-
-    return translations
-
-
-def get_keywords(keyword_urls):
-    '''For now just get the id from the url directly.'''
-    ids = []
-    for keyword_url in keyword_urls:
-        ids.append(url_to_id(keyword_url['@id']))
-    return ids
+    return {
+        'type': 'Place',
+        'latitude': coordinates[0],
+        'longitude': coordinates[1],
+        'id': 'https://id.hel.fi/unit/' + location['id'],
+        'nameMap': location['name'],
+        'divisions': location['divisions'],
+    }
 
 
-def url_to_id(url):
-    parts = urllib.parse.urlparse(url)
-    path = parts[2].split('/')
-    return path[-2]
+class LinkedeventsAPIConsumer(BaseAPIConsumer):
+    page_size = 100
+
+    def __init__(self):
+        self.target = (
+            'https://api.hel.fi/linkedevents/v1/event/'
+            '?format=json'
+            '&last_modified_since=' + get_last_modified().isoformat() +
+            '&include=keywords,location'
+            '&page_size=%s'
+        ) % (self.page_size)
 
 
 class LinkedeventsImporter:
 
-    count = 0
-    processed = 0
-    page_size = 100
-    errors = 0
+    consumer = None
 
     logger = logging.getLogger(__name__)
 
     locations = {}
+    organizations = {}
+    keywords = {}
 
-    target = (
-        'https://api.hel.fi/linkedevents/v1/event/'
-        '?format=json'
-        '&page_size=%s'
-    ) % (page_size)
+    def __init__(self):
+        self.consumer = LinkedeventsAPIConsumer()
 
-    def __init__(self, address, progress=False):
-        self.own_url = address
+    def __iter__(self):
+        return self
 
-        while self.target:
-            try:
-                events = requests.get(url=self.target).json()
-            except requests.exceptions.RequestException as ex:
-                self.logger.error(ex)
-                break
-            self.target = events['meta']['next']
-            self.count = events['meta']['count']
+    def __next__(self):
+        return self.event_to_activity_stream(self.consumer.__next__())
 
-            for event in events['data']:
-                response = self.process_event(event)
-                if response.status_code not in [200, 201]:
-                    self.logger.error(
-                        'Error while importing %s: %s',
-                        event['id'],
-                        response.text,
-                    )
-                    self.errors = self.errors + 1
+    def get_organization(self, event):
+        if event['publisher'] is None:
+            return None
+        org_url = 'http://api.hel.fi/linkedevents/v1/organization/' + event['publisher']
 
-                self.processed = self.processed + 1
-                if progress:
-                    show_progress(self.processed, self.count)
+        if org_url in self.organizations:
+            return self.organizations[org_url]
 
-        self.logger.info(
-            'Import done: %s processed, %s errors',
-            self.processed,
-            self.errors,
-        )
+        org = requests.get(org_url, params={'format': 'json'}).json()
+        organization = {
+            'type': 'Organization',
+            'name': org['name'],
+            'id': 'http://id.hel.fi/organization/' + org['id'],
+        }
 
-    def process_event(self, event):
-        external_id = event['id']
-        translations = {}
-        position = None
-        keywords = None
+        self.organizations[org_url] = organization
+        return organization
+
+    def event_to_activity_stream(self, event):
+        # Turns a single event into a simplified activity stream object,
+        # because we don't care about all fields.
+
+        org_name = ''
+        organization = self.get_organization(event)
+        if organization is not None:
+            org_name = organization.get('name')
+
+        unknown_org_names = {
+            'fi': 'Nimetön organisaatio',
+            'sv': 'En namnlös organisation',
+            'en': 'An unnamed organization',
+        }
+
+        summaries = {}
+        summary_texts = {
+            'fi': 'lisäsi tapahtuman',
+            'sv': 'skapade evenemanget',
+            'en': 'announced the event',
+        }
 
         for language_code, _ in settings.LANGUAGES:
-            current_translations = get_translations(language_code, event)
-            if current_translations is not None:
-                translations[language_code] = current_translations
+            used_org_name = ''
+            if not org_name:
+                used_org_name = unknown_org_names[language_code]
+            else:
+                used_org_name = org_name
 
-        if event['location'] is not None:
-            position = self.get_location(event['location']['@id'])
+            summaries[language_code] = "%s %s %s" % (
+                used_org_name,
+                summary_texts[language_code],
+                get_any_language(event['name'], language_code),
+            )
 
-        if event['keywords'] is not None:
-            keywords = get_keywords(event['keywords'])
-
-        json_event = json.dumps({
-            'location': position,
-            'keywords': keywords,
-            'translations': translations,
-        })
-
-        response = requests.put(
-            self.own_url + external_id + '/',
-            data=json_event,
-            headers={'Content-type': 'application/json'},
-        )
-        return response
-
-    def get_location(self, place_url):
-        if place_url in self.locations:
-            return self.locations[place_url]
-
-        place = requests.get(place_url, params={'format': 'json'}).json()
-        position = place['position']
-
-        self.locations[place_url] = position
-        return position
+        activity = {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            'summaryMap': summaries,
+            'type': 'Announce',
+            'published': event['date_published'],
+            'generator': 'https://api.hel.fi/linkedevents/v1/event',
+            'actor': organization,
+            'object': {
+                'id': 'https://id.hel.fi/event/' + event['id'],
+                'nameMap': event['name'],
+                'type': 'Event',
+                'tag': get_tags(event),
+                'location': get_location(event),
+            },
+        }
+        return activity
