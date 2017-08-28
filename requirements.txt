@@ -8,7 +8,7 @@ django==1.11.2
 django-environ==0.4.3
 django-modeltranslation==0.12.1
 django-mptt==0.8.7
-django-munigeo==0.2.0
+-e git+git://github.com/City-of-Helsinki/django-munigeo.git#egg=django-munigeo
 django-parler==1.8
 django-parler-rest==1.4.2
 djangorestframework==3.6.3

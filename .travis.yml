@@ -1,12 +1,26 @@
 sudo: false
-dist: trusty
 language: python
 
 cache: pip
 
-python:
-  - 3.5
+env:
+  global:
+    - DEBUG=True
+    - SECRET_KEY=topsecret123
+    - EMAIL_FROM_NAME="John Doe"
+    - EMAIL_FROM_ADDRESS="john.doe@example.org"
+    - EMAIL_AUTH_NAME="messaging"
+    - EMAIL_AUTH_PASS="messaging"
+    - TUNNISTAMO_URL='http://localhost/'
+    - DATABASE_URL=postgis://postgres:@localhost/aggregaattori
 
+python:
+  - "3.5"
+  - "3.6"
+  - "nightly"
+
+# As of 2017-08 the new travis trusty images have broken postgis,
+# so we have to specify the exact postgres version to install the right addons
 addons:
   postgresql: 9.6
   apt:
@@ -14,11 +28,12 @@ addons:
     - postgresql-9.6-postgis-2.3
 
 install:
+  - pip install -U pip
   - pip install -r requirements.txt -r requirements-dev.txt
 
 before_script:
-  - psql -c 'create database aggregaatori;' -U postgres
-  - psql -U postgres -c "create extension postgis"
+  - psql -U postgres -c 'create database aggregaattori;'
+  - psql -U postgres -c "create extension postgis;"
 
 script:
   - flake8
@@ -26,13 +41,3 @@ script:
   - isort -c
 
 after_success: codecov
-
-env:
-  - SECRET_KEY=topsecret123
-  - EMAIL_FROM_NAME="John Doe"
-  - EMAIL_FROM_ADDRESS="john.doe@example.org"
-
-  - EMAIL_AUTH_NAME="messaging"
-  - EMAIL_AUTH_PASS="messaging"
-
-  - TUNNISTAMO_URL='http://localhost/'

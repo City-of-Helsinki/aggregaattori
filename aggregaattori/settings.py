@@ -16,8 +16,21 @@ from environ import Env
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-env = Env()
-env.read_env(os.path.join(BASE_DIR, '.env'))
+env = Env(
+    DEBUG=(bool, True),
+    ALLOWED_HOSTS=(list, []),
+    DATABASE_URL=(str, 'postgis://aggregaattori:aggregaattori@localhost/aggregaattori'),
+    EMAIL_FROM_NAME=(str, "Aggregaattori"),
+    EMAIL_FROM_ADDRESS=(str, "aggregaattori@example.com"),
+    EMAIL_AUTH_NAME=(str, ''),
+    EMAIL_AUTH_PASS=(str, ''),
+    TUNNISTAMO_URL=(str, ''),
+)
+
+env_filename = os.path.join(BASE_DIR, '.env')
+
+if os.path.exists(env_filename):
+    env.read_env(env_filename)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -50,6 +63,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'parler',
+    'modeltranslation',
 
     # For handling municipalities data, especially administrative divisions
     # that are used by the API to determine location.

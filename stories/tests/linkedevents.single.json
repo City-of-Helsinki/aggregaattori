@@ -1,0 +1,183 @@
+{
+    "meta": {
+        "count": 1,
+        "next": null,
+        "previous": null
+    },
+    "data": [{
+        "id": "linkedevents:test-1234",
+        "location": {
+            "id": "tprek:1955",
+            "divisions": [
+                {
+                    "type": "muni",
+                    "ocd_id": "ocd-division/country:fi/kunta:helsinki",
+                    "municipality": null,
+                    "name": {
+                        "sv": "Helsingfors",
+                        "fi": "Helsinki"
+                    }
+                },
+                {
+                    "type": "district",
+                    "ocd_id": "ocd-division/country:fi/kunta:helsinki/peruspiiri:mellunkylä",
+                    "municipality": "Helsinki",
+                    "name": {
+                        "sv": "Mellungsby",
+                        "fi": "Mellunkylä"
+                    }
+                },
+                {
+                    "type": "neighborhood",
+                    "ocd_id": "ocd-division/country:fi/kunta:helsinki/kaupunginosa:mellunkylä",
+                    "municipality": "Helsinki",
+                    "name": {
+                        "sv": "Mellungsby",
+                        "fi": "Mellunkylä"
+                    }
+                },
+                {
+                    "type": "sub_district",
+                    "ocd_id": "ocd-division/country:fi/kunta:helsinki/osa-alue:kontula",
+                    "municipality": "Helsinki",
+                    "name": {
+                        "sv": "Gårdsbacka",
+                        "fi": "Kontula"
+                    }
+                }
+            ],
+            "custom_data": null,
+            "created_time": null,
+            "last_modified_time": "2017-01-31T01:09:21.899771Z",
+            "email": null,
+            "contact_type": null,
+            "address_region": null,
+            "postal_code": "00940",
+            "post_office_box_num": null,
+            "address_country": null,
+            "deleted": false,
+            "n_events": 37,
+            "data_source": "tprek",
+            "image": null,
+            "publisher": null,
+            "parent": null,
+            "position": {
+                "type": "Point",
+                "coordinates": [
+                    25.08474,
+                    60.243496
+                ]
+            },
+            "description": null,
+            "street_address": {
+                "sv": "Gårdsgränden 5",
+                "fi": "Kontukuja 5",
+                "en": "Kontukuja 5"
+            },
+            "address_locality": {
+                "sv": "Helsingfors",
+                "fi": "Helsinki",
+                "en": "Helsinki"
+            },
+            "name": {
+                "sv": "Gårdsbacka mångsidiga servicecentral / Servicecentralen",
+                "fi": "Kontulan monipuolinen palvelukeskus",
+                "en": "Kontula comprehensive service centre / Service centre"
+            },
+            "info_url": null,
+            "telephone": {
+                "fi": "09 310 61800"
+            },
+            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/",
+            "@context": "http://schema.org",
+            "@type": "Place"
+        },
+        "keywords": [
+            {
+                "id": "yso:p18105",
+                "alt_labels": [
+                    "verkkokeskustelu",
+                    "nyhetsgrupper",
+                    "uutisryhmät"
+                ],
+                "created_time": "2014-06-23T11:37:25.345000Z",
+                "last_modified_time": "2014-06-23T11:37:25.345000Z",
+                "aggregate": false,
+                "deprecated": false,
+                "n_events": 9046,
+                "data_source": "yso",
+                "image": null,
+                "name": {
+                    "sv": "diskussionsgrupper",
+                    "fi": "keskusteluryhmät",
+                    "en": "discussion groups"
+                },
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/",
+                "@context": "http://schema.org",
+                "@type": "Keyword"
+            },
+            {
+                "id": "yso:p2434",
+                "alt_labels": [
+                    "ikäihmiset",
+                    "ikä-ihmiset",
+                    "gamlingar"
+                ],
+                "created_time": "2014-06-23T11:37:30.235000Z",
+                "last_modified_time": "2017-03-20T11:37:12.050444Z",
+                "aggregate": false,
+                "deprecated": false,
+                "n_events": 5729,
+                "data_source": "yso",
+                "image": null,
+                "name": {
+                    "sv": "åldringar",
+                    "fi": "vanhukset",
+                    "en": "elderly"
+                },
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/",
+                "@context": "http://schema.org",
+                "@type": "Keyword"
+            }
+        ],
+        "super_event": null,
+        "event_status": "EventScheduled",
+        "external_links": [],
+        "offers": [
+            {
+                "is_free": true,
+                "description": null,
+                "info_url": null,
+                "price": null
+            }
+        ],
+        "data_source": "test",
+        "publisher": null,
+        "sub_events": null,
+        "in_language": [],
+        "audience": [],
+        "custom_data": null,
+        "created_time": null,
+        "last_modified_time": "2017-08-18T08:13:29.050780Z",
+        "date_published": null,
+        "start_time": "2017-09-21T13:00:00Z",
+        "end_time": "2017-11-23T18:00:00Z",
+        "super_event_type": "recurring",
+        "short_description": {
+            "fi": "Lörem ipsum dölör sit ämåt, consectetur adipiscing elit."
+        },
+        "description": {
+            "fi": "Lörem ipsum dölör sit ämåt, consectetur adipiscing elit. Donec interdum urna est, eget mollis libero facilisis eu. Nullam pulvinar bibendum sem, in mollis erat accumsan a. Integer odio mauris, tempus vitae porttitor quis, sodales in orci. Vestibulum efficitur elementum sodales. Duis blandit turpis massa, quis efficitur elit ornare nec. Nullam quis ipsum sit amet mi sollicitudin iaculis. Nam pharetra ex ornare pulvinar dapibus."
+        },
+        "name": {
+            "fi": "Lörem ipsum dölör sit ämåt"
+        },
+        "location_extra_info": null,
+        "provider": null,
+        "info_url": null,
+        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/",
+        "@context": "http://schema.org",
+        "@type": "Event/LinkedEvent",
+        "images": []
+    }]
+}

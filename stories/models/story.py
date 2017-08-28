@@ -35,9 +35,12 @@ class Story(TranslatableModel):
         max_length=255,
         unique=True,
     )
-    location = models.GeometryField(
-        verbose_name=_('Location'),
-        null=True,
+    type = models.CharField(
+        max_length=32,
+    )
+    locations = models.ManyToManyField(
+        AdministrativeDivision,
+        related_name='stories',
         blank=True,
     )
     ocd_id = models.CharField(
@@ -92,7 +95,7 @@ class Story(TranslatableModel):
             return "<p>%s</p>" % text
 
         contents = []
-        for language_code, _ in settings.LANGUAGES:
+        for language_code, language_name in settings.LANGUAGES:
             contents.append({
                 'language': language_code,
                 'subject': translate_field('title', language_code),
@@ -125,19 +128,3 @@ class Story(TranslatableModel):
         self.sent = True
         self.save()
         return True
-
-    def set_ocd_id(self):
-        if self.location is None:
-            return
-
-        divisions = AdministrativeDivision.objects.filter(
-            geometry__boundary__contains=self.location,
-        )
-
-        for division in divisions:
-            if division.type.type == 'district':
-                self.ocd_id = division.ocd_id
-
-    def save(self, *args, **kwargs):
-        self.set_ocd_id()
-        super().save(*args, **kwargs)
