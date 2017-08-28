@@ -5,6 +5,7 @@ cache: pip
 
 env:
   global:
+    - DEBUG=True
     - SECRET_KEY=topsecret123
     - EMAIL_FROM_NAME="John Doe"
     - EMAIL_FROM_ADDRESS="john.doe@example.org"
