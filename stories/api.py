@@ -1,7 +1,6 @@
 from parler_rest.serializers import (TranslatableModelSerializer,
                                      TranslatedFieldsField)
 from rest_framework import mixins, routers, serializers, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from .models import Keyword, Story
 
@@ -34,14 +33,14 @@ class APIRouter(routers.DefaultRouter):
 
 class KeywordsField(serializers.RelatedField):
     def to_representation(self, value):
-        '''Returns an array of YSOs in string format.'''
+        """Returns an array of YSOs in string format."""
         ysos = []
         for keyword in value.all():
             ysos.append(keyword.yso)
         return ysos
 
     def to_internal_value(self, yso_ids):
-        '''Returns a list of primary keys of the keywords.'''
+        """Returns a list of primary keys of the keywords."""
         pks = []
         for yso_id in yso_ids:
             keyword, _ = Keyword.objects.get_or_create(

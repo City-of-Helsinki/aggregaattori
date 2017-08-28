@@ -95,7 +95,7 @@ class Story(TranslatableModel):
             return "<p>%s</p>" % text
 
         contents = []
-        for language_code, _ in settings.LANGUAGES:
+        for language_code, language_name in settings.LANGUAGES:
             contents.append({
                 'language': language_code,
                 'subject': translate_field('title', language_code),
