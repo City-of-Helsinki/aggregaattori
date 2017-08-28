@@ -3,28 +3,33 @@ import json
 import requests
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from munigeo.models import AdministrativeDivision
 from parler.models import TranslatableModel, TranslatedFields
 
 from .keyword import Keyword
+from .actor import Actor
 
 
 class Story(TranslatableModel):
     translations = TranslatedFields(
-        title=models.CharField(
-            verbose_name=_('Title'),
+        name=models.CharField(
+            verbose_name=_('Name'),
             max_length=255,
             blank=True,
         ),
-        text=models.TextField(
-            verbose_name=_('Text'),
+
+        content=models.TextField(
+            verbose_name=_('Content'),
             blank=True,
         ),
-        short_text=models.TextField(
-            verbose_name=_('Short text'),
+
+        summary=models.TextField(
+            verbose_name=_('Summary'),
             blank=True,
         ),
+
         url=models.URLField(
             verbose_name=_('URL'),
             blank=True,
@@ -33,27 +38,54 @@ class Story(TranslatableModel):
 
     external_id = models.CharField(
         max_length=255,
-        unique=True,
+        unique=False,
     )
+
     type = models.CharField(
         max_length=32,
     )
+
+    published = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+
+    generator = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
+
+    actor = models.ForeignKey(
+        Actor,
+        blank=True,
+        null=True,
+    )
+
     locations = models.ManyToManyField(
         AdministrativeDivision,
         related_name='stories',
         blank=True,
     )
-    ocd_id = models.CharField(
-        max_length=255,
-        blank=True,
-    )
+
     keywords = models.ManyToManyField(
         Keyword,
         related_name='stories',
         blank=True,
     )
+
     sent = models.BooleanField(
         default=False,
+    )
+
+    json = JSONField(
+        blank=True,
+        null=True,
+    )
+
+    geometry = models.GeometryField(
+        blank=True,
+        null=True,
     )
 
     class Meta:
