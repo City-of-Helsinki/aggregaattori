@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 
 from stories.api import APIRouter
+from stories.views import import_activity_stream
 
 admin.autodiscover()
 
@@ -27,5 +28,6 @@ router = APIRouter()
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^v1/', include(router.urls)),
+    url(r'^v1/import_activity_stream/', import_activity_stream),
     url(r'^$', RedirectView.as_view(url='v1/'))
 ]

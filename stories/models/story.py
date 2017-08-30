@@ -8,8 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from munigeo.models import AdministrativeDivision
 from parler.models import TranslatableModel, TranslatedFields
 
-from .keyword import Keyword
 from .actor import Actor
+from .keyword import Keyword
 
 
 class Story(TranslatableModel):
@@ -94,6 +94,12 @@ class Story(TranslatableModel):
 
     def __unicode__(self):
         return self.title
+
+    def as_activity_stream(self):
+        # TODO figure out exactly what we want to return here
+        return {
+            'id': self.id,
+        }
 
     def get_interested_users(self):
         # This project uses YSO for identifying keywords.
