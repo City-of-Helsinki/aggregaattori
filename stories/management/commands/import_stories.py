@@ -1,3 +1,5 @@
+import requests
+import json
 from django.core.management.base import BaseCommand
 
 from stories.importers import LinkedeventsImporter
@@ -9,17 +11,16 @@ class Command(BaseCommand):
             'address',
             type=str,
             help=(
-                'The address of the server where stories are PUT.'
+                'The address of the server where stories are POSTed.'
                 ' Example: http://127.0.0.1:8000/v1/story/'
             ),
         )
-        parser.add_argument(
-            '--progress',
-            default=False,
-            action='store_true',
-            dest='progress',
-            help='Show progress percentage',
-        )
 
     def handle(self, *args, **options):
-        LinkedeventsImporter(options['address'], progress=options['progress'])
+        for event in LinkedeventsImporter():
+            requests.post(
+                options['address'],
+                data=json.dumps(event),
+                headers={'Content-Type': 'application/json'},
+
+            )
