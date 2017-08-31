@@ -17,7 +17,6 @@ class Keyword(TranslatableModel):
         unique=True,
     )
 
-
     class Meta:
         verbose_name = _('Keyword')
         verbose_name_plural = _('Keywords')
