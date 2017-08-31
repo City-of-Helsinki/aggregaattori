@@ -1,85 +1,74 @@
+import uuid
+
 import pytest
-from rest_framework.test import APIClient
+from munigeo.models import AdministrativeDivision, AdministrativeDivisionType
 
 
-class TestStory:
-    client = APIClient()
-    url = 'http://testserver/v1/story/'
+@pytest.mark.django_db
+def test_get_interested_request_params(story_factory, keyword_factory):
+    keyword1 = keyword_factory(name='Keyword1', external_id='kw:1')
+    keyword2 = keyword_factory(name='Keyword1', external_id='kw:2')
 
-    story = {
-        "external_id": "test:1234",
-        "location": {
-            "type": "Point",
-            "coordinates": [
-                25.000000,
-                60.170833
-            ]
-        },
-        "keywords": [
-            "yso:p8471",
-            "yso:p26360"
-        ],
-        "ocd_id": "This should be overridden",
-        "translations": {
-            "en": {
-                "title": "English test title",
-                "short_text": "Short text.",
-                "text": "English test text.",
-                "url": "http://example.org/en"
-            }
-        }
+    ad_type = AdministrativeDivisionType.objects.create(type='district', name='District')
+
+    ad1 = AdministrativeDivision.objects.create(
+        type=ad_type,
+        ocd_id='ocd-division/country:fi/kunta:helsinki/peruspiiri:ullanlinna'
+    )
+    ad2 = AdministrativeDivision.objects.create(
+        type=ad_type,
+        ocd_id='ocd-division/country:fi/kunta:helsinki/peruspiiri:reijola'
+    )
+
+    story = story_factory(name='Test', type='Create', summary='Test Summary', content='Test Content',
+                          url='http://www.example.com/test/', )
+
+    story.keywords = [keyword1, keyword2]
+    story.locations = [ad1, ad2]
+
+    expected = {
+        'division': 'ocd-division/country:fi/kunta:helsinki/peruspiiri:ullanlinna,'
+                    'ocd-division/country:fi/kunta:helsinki/peruspiiri:reijola',
+        'yso': 'kw:1,kw:2',
     }
 
-    @pytest.mark.django_db
-    def test__post(self):
+    assert story.get_interested_request_params() == expected
 
-        response = self.client.post(
-            self.url,
-            self.story,
-            format='json',
-        )
 
-        assert response.status_code == 201
+@pytest.mark.django_db
+def test_create_message(settings, story_factory, keyword_factory):
+    settings.EMAIL_FROM_NAME = 'From Name'
+    settings.EMAIL_FROM_ADDRESS = 'from@example.com'
+    settings.LANGUAGES = (('en', 'English'), ('fi', 'Finnish'),)
 
-    @pytest.mark.django_db
-    def test__put(self):
+    story = story_factory(name='Test', type='Create', summary='Test Summary', content='Test Content',
+                          url='http://www.example.com/test/')
 
-        response = self.client.post(
-            self.url,
-            self.story,
-            format='json',
-        )
+    user_uuids = [str(uuid.uuid4()), str(uuid.uuid4())]
 
-        story = response.json()
+    expected = {
+        'from_name': 'From Name',
+        'from_email': 'from@example.com',
+        'recipients': [{
+            "uuid": val
+        } for val in user_uuids],
+        'contents': [{
+            'html': '<p>Test Content</p>',
+            'language': 'en',
+            'short_text': 'Test Summary',
+            'subject': 'Test Summary',
+            'text': 'Test Content',
+            'url': 'http://www.example.com/test/'
+        }, {
+            'html': '<p>Test Content</p>',
+            'language': 'fi',
+            'short_text': 'Test Summary',
+            'subject': 'Test Summary',
+            'text': 'Test Content',
+            'url': 'http://www.example.com/test/'
+        }],
+    }
 
-        assert response.status_code == 201
+    message = story.create_message(user_uuids)
 
-        modified_story = self.story.copy()
-
-        response = self.client.put(
-            self.url + str(story['id']) + '/',
-            modified_story,
-            format='json',
-        )
-
-        assert response.status_code == 200
-
-    @pytest.mark.django_db
-    def test__put_changes_content(self):
-        response = self.client.post(
-            self.url,
-            self.story,
-            format='json',
-        )
-        story = response.json()
-
-        response = self.client.get(self.url + str(story['id']) + '/')
-        response_story = response.json()
-
-        assert response_story['external_id'] == 'test:1234'
-        assert response_story['keywords'] == [
-            "yso:p8471",
-            "yso:p26360",
-        ]
-
-        assert response.status_code == 200
+    assert message == expected

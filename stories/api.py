@@ -2,7 +2,7 @@ from parler_rest.serializers import (TranslatableModelSerializer,
                                      TranslatedFieldsField)
 from rest_framework import mixins, routers, serializers, viewsets
 
-from .models import Keyword, Story
+from .models import Story
 
 all_views = []
 
@@ -31,25 +31,6 @@ class APIRouter(routers.DefaultRouter):
             self._register_view(view)
 
 
-class KeywordsField(serializers.RelatedField):
-    def to_representation(self, value):
-        """Returns an array of YSOs in string format."""
-        ysos = []
-        for keyword in value.all():
-            ysos.append(keyword.yso)
-        return ysos
-
-    def to_internal_value(self, yso_ids):
-        """Returns a list of primary keys of the keywords."""
-        pks = []
-        for yso_id in yso_ids:
-            keyword, _ = Keyword.objects.get_or_create(
-                yso=yso_id,
-            )
-            pks.append(keyword.pk)
-        return pks
-
-
 class StorySerializer(TranslatableModelSerializer):
     translations = TranslatedFieldsField(
         shared_model=Story,
@@ -61,16 +42,6 @@ class StorySerializer(TranslatableModelSerializer):
         required=False,
     )
 
-    keywords = KeywordsField(
-        queryset=Keyword.objects.all(),
-        required=False,
-    )
-
-    ocd_id = serializers.CharField(
-        read_only=True,
-        required=False,
-    )
-
     class Meta:
         model = Story
         fields = (
@@ -78,7 +49,9 @@ class StorySerializer(TranslatableModelSerializer):
             'external_id',
             'keywords',
             'locations',
-            'ocd_id',
+            'type',
+            'generator',
+            'published',
             'translations',
         )
 
