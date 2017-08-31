@@ -1,5 +1,6 @@
 from django.contrib.gis.geos import Point
 from munigeo.models import AdministrativeDivision
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -22,7 +23,7 @@ def import_activity_streams(request):
             responses.append(import_activity_stream(data))
     elif isinstance(request.data, dict):
         responses.append(import_activity_stream(data))
-    return Response(responses)
+    return Response(responses, status=status.HTTP_201_CREATED)
 
 
 def import_activity_stream(data):
