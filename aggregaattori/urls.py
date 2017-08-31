@@ -28,6 +28,6 @@ router = APIRouter()
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^v1/', include(router.urls)),
-    url(r'^v1/import_activity_stream/', import_activity_stream),
+    url(r'^v1/activity_stream/', import_activity_streams),
     url(r'^$', RedirectView.as_view(url='v1/'))
 ]
