@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Actor(models.Model):
     external_id = models.CharField(
-        verbose_name=_('ID'),
+        verbose_name=_('External ID'),
         max_length=255,
         blank=True,
     )
