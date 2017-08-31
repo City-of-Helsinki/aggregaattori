@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 
 from stories.api import APIRouter
-from stories.views import import_activity_stream
+from stories.views import import_activity_streams
 
 admin.autodiscover()
 

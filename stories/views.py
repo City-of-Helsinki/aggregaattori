@@ -13,10 +13,20 @@ def map_translated(story, translations, attribute):
 
 
 @api_view(['POST'])
-def import_activity_stream(request):
-    story = Story()
-
+def import_activity_streams(request):
     data = request.data
+    responses = []
+
+    if isinstance(request.data, list):
+        for data in request.data:
+            responses.append(import_activity_stream(data))
+    elif isinstance(request.data, dict):
+        responses.append(import_activity_stream(data))
+    return Response(responses)
+
+
+def import_activity_stream(data):
+    story = Story()
 
     story.published = data['published']
     map_translated(story, data['summaryMap'], 'summary')
@@ -53,7 +63,7 @@ def import_activity_stream(request):
         map_translated(keyword, tag['nameMap'], 'name')
         story.keywords.add(keyword)
 
-    return Response(story.as_activity_stream())
+    return story.as_activity_stream()
 
 
 def get_ocd_id(point):
