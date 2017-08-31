@@ -101,19 +101,19 @@ class Story(TranslatableModel):
             'id': self.id,
         }
 
-    def get_interested_users(self):
+    def get_interested_request_params(self):
         # This project uses YSO for identifying keywords.
         # For more information see https://finto.fi/yso/en/
-        ysos = []
-        for keyword in self.keywords.all():
-            ysos.append(keyword.yso)
-
-        url = '%s/interested/' % (settings.TUNNISTAMO_URL)
-
         params = {
-            'division': self.ocd_id,
-            'yso': ','.join(ysos),
+            'division': ','.join([l.ocd_id for l in self.locations.all()]),
+            'yso': ','.join([k.external_id for k in self.keywords.all()]),
         }
+
+        return params
+
+    def get_interested_users(self):
+        url = '%s/interested/' % (settings.TUNNISTAMO_URL)
+        params = self.get_interested_request_params()
 
         return requests.get(url, params=params).json()
 
@@ -136,11 +136,11 @@ class Story(TranslatableModel):
         for language_code, language_name in settings.LANGUAGES:
             contents.append({
                 'language': language_code,
-                'subject': translate_field('title', language_code),
+                'subject': translate_field('summary', language_code),
                 'url': translate_field('url', language_code),
-                'text': translate_field('text', language_code),
-                'html': add_template(translate_field('text', language_code)),
-                'short_text': translate_field('short_text', language_code),
+                'text': translate_field('content', language_code),
+                'html': add_template(translate_field('content', language_code)),
+                'short_text': translate_field('summary', language_code),
             })
 
         return {
