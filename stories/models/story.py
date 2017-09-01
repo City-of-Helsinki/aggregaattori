@@ -151,7 +151,16 @@ class Story(TranslatableModel):
         }
 
     def send(self, address):
-        message = self.create_message(self.get_interested_users())
+        user_uuids = self.get_interested_users()
+
+        if not user_uuids:
+            # No interested users, save as sent for now.
+            self.sent = True
+            self.save()
+
+            return False
+
+        message = self.create_message(user_uuids)
 
         response = requests.post(
             address,
@@ -165,4 +174,5 @@ class Story(TranslatableModel):
 
         self.sent = True
         self.save()
+
         return True

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import datetime
 import logging
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
+import pytz
 import requests
 from django.conf import settings
+from django.utils import timezone
 
 from stories.importers.base import BaseAPIConsumer
+from stories.models import ImportLog
 
 
 def get_any_language(dictionary, preferred):
@@ -30,19 +33,48 @@ def safe_get(event, attribute, language_code):
     return field.get(language_code)
 
 
+def strip_format_parameter(url):
+    if url is None:
+        return url
+
+    try:
+        parsed = urlparse(url)
+
+        query = parse_qs(parsed.query)
+        query.pop('format', None)
+        new_query = urlencode(query, True)
+
+        new_parts = list(parsed)
+        new_parts[4] = new_query
+
+        new_url = urlunparse(new_parts)
+
+        return new_url
+    except ValueError:
+        return url
+
+
 def get_tags(event):
     tags = []
     for keyword in event['keywords']:
         tags.append({
-            'id': keyword['@id'],
+            'id': strip_format_parameter(keyword['@id']),
             'nameMap': keyword['name'],
         })
     return tags
 
 
 def get_last_modified():
-    # Placeholder for getting the timestamp of the last import
-    return datetime.date.today() - datetime.timedelta(days=1)
+    latest = None
+    try:
+        latest = ImportLog.objects.filter(importer='LinkedEventsImporter').latest()
+    except ImportLog.DoesNotExist:
+        pass
+
+    if not latest:
+        return timezone.now() - datetime.timedelta(days=1)
+
+    return latest.import_time
 
 
 def get_location(event):
@@ -69,10 +101,14 @@ class LinkedeventsAPIConsumer(BaseAPIConsumer):
     page_size = 100
 
     def __init__(self):
+        # LinkedEvents expects time in Europe/Helsinki timezone without timezone information
+        last_modified_string = get_last_modified().astimezone(pytz.timezone('Europe/Helsinki')).strftime(
+            '%Y-%m-%dT%H:%M:%S')
+
         self.target = (
             'https://api.hel.fi/linkedevents/v1/event/'
             '?format=json'
-            '&last_modified_since=' + get_last_modified().isoformat() +
+            '&last_modified_since=' + last_modified_string +
             '&include=keywords,location'
             '&page_size=%s'
         ) % (self.page_size)

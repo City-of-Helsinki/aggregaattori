@@ -88,7 +88,7 @@
             "telephone": {
                 "fi": "09 310 61800"
             },
-            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/",
+            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/?format=json",
             "@context": "http://schema.org",
             "@type": "Place"
         },
@@ -112,7 +112,7 @@
                     "fi": "keskusteluryhmät",
                     "en": "discussion groups"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             },
@@ -135,7 +135,7 @@
                     "fi": "vanhukset",
                     "en": "elderly"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             }
@@ -175,7 +175,7 @@
         "location_extra_info": null,
         "provider": null,
         "info_url": null,
-        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/",
+        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/?format=json",
         "@context": "http://schema.org",
         "@type": "Event/LinkedEvent",
         "images": []
@@ -264,7 +264,7 @@
             "telephone": {
                 "fi": "09 310 61800"
             },
-            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/",
+            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/?format=json",
             "@context": "http://schema.org",
             "@type": "Place"
         },
@@ -288,7 +288,7 @@
                     "fi": "keskusteluryhmät",
                     "en": "discussion groups"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             },
@@ -311,7 +311,7 @@
                     "fi": "vanhukset",
                     "en": "elderly"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             }
@@ -351,7 +351,7 @@
         "location_extra_info": null,
         "provider": null,
         "info_url": null,
-        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/",
+        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/?format=json",
         "@context": "http://schema.org",
         "@type": "Event/LinkedEvent",
         "images": []
@@ -440,7 +440,7 @@
             "telephone": {
                 "fi": "09 310 61800"
             },
-            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/",
+            "@id": "https://api.hel.fi/linkedevents/v1/place/tprek:1955/?format=json",
             "@context": "http://schema.org",
             "@type": "Place"
         },
@@ -464,7 +464,7 @@
                     "fi": "keskusteluryhmät",
                     "en": "discussion groups"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p18105/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             },
@@ -487,7 +487,7 @@
                     "fi": "vanhukset",
                     "en": "elderly"
                 },
-                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/",
+                "@id": "https://api.hel.fi/linkedevents/v1/keyword/yso:p2434/?format=json",
                 "@context": "http://schema.org",
                 "@type": "Keyword"
             }
@@ -527,7 +527,7 @@
         "location_extra_info": null,
         "provider": null,
         "info_url": null,
-        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/",
+        "@id": "https://api.hel.fi/linkedevents/v1/event/linkedevents:test-1234/?format=json",
         "@context": "http://schema.org",
         "@type": "Event/LinkedEvent",
         "images": []

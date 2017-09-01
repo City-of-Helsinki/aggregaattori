@@ -2,7 +2,10 @@
 
 import json
 
+import pytest
+
 from stories.importers import BaseAPIConsumer, LinkedeventsImporter
+from stories.importers.linkedevents import strip_format_parameter
 
 
 class TestAPIConsumer(BaseAPIConsumer):
@@ -21,6 +24,7 @@ def get_importer(filename):
     return importer
 
 
+@pytest.mark.django_db
 def test_zero_linkedevent_importer():
     importer = get_importer('stories/tests/linkedevents.empty.json')
     events = []
@@ -30,6 +34,7 @@ def test_zero_linkedevent_importer():
     assert len(events) == 0
 
 
+@pytest.mark.django_db
 def test_single_linkedevent_importer():
     importer = get_importer('stories/tests/linkedevents.single.json')
 
@@ -38,6 +43,7 @@ def test_single_linkedevent_importer():
     assert event == get_expected_dict()
 
 
+@pytest.mark.django_db
 def test_multiple_linkedevent_importer():
     importer = get_importer('stories/tests/linkedevents.multiple.json')
     events = []
@@ -132,3 +138,26 @@ def get_expected_dict():
         },
         'type': 'Announce'
     }
+
+
+@pytest.mark.parametrize('url,expected', [
+    (None, None),
+    ('', ''),
+    ('test', 'test'),
+    ('tprek:1955', 'tprek:1955'),
+    ('https://api.hel.fi/linkedevents/v1/place/tprek:1955/', 'https://api.hel.fi/linkedevents/v1/place/tprek:1955/'),
+
+    ('https://api.hel.fi/linkedevents/v1/place/tprek:1955/?format=json',
+     'https://api.hel.fi/linkedevents/v1/place/tprek:1955/'),
+
+    ('https://api.hel.fi/linkedevents/v1/keyword/yso:p11185/?format=json',
+     'https://api.hel.fi/linkedevents/v1/keyword/yso:p11185/'),
+
+    ('https://api.hel.fi/linkedevents/v1/keyword/yso:p11185/?format=json&testparam=1',
+     'https://api.hel.fi/linkedevents/v1/keyword/yso:p11185/?testparam=1'),
+
+    ('http://www.w3.org/2001/XMLSchema#dateTime', 'http://www.w3.org/2001/XMLSchema#dateTime'),
+    ('http://www.w3.org/2001/XMLSchema?format=json#dateTime', 'http://www.w3.org/2001/XMLSchema#dateTime'),
+])
+def test_strip_format_url_parameter(url, expected):
+    assert strip_format_parameter(url) == expected

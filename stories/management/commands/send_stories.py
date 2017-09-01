@@ -14,9 +14,15 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        self.stdout.write('Sending unsent stories.')
         stories = Story.objects.filter(sent=False)
+
+        self.stdout.write('{} unsent stories found.'.format(stories.count()))
+
         for story in stories:
+            self.stdout.write('Story {}...'.format(story.external_id), ending='')
+
             if story.send(address=options['address']):
-                print("OK %s" % story.external_id)
+                self.stdout.write('Sent.')
             else:
-                print("FAIL %s" % story.external_id)
+                self.stdout.write('Fail or no interested users.')
