@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from stories.importers.base import BaseAPIConsumer
-from stories.models import ImportLog
+from stories.models import ImportLog, Story
 
 
 def get_any_language(dictionary, preferred):
@@ -89,8 +89,8 @@ def get_location(event):
 
     return {
         'type': 'Place',
-        'latitude': coordinates[0],
-        'longitude': coordinates[1],
+        'latitude': coordinates[1],
+        'longitude': coordinates[0],
         'id': 'https://id.hel.fi/unit/' + location['id'],
         'nameMap': location['name'],
         'divisions': location['divisions'],
@@ -155,6 +155,8 @@ class LinkedeventsImporter:
         # Turns a single event into a simplified activity stream object,
         # because we don't care about all fields.
 
+        event_id = 'https://id.hel.fi/event/{}'.format(event['id'])
+
         org_name = ''
         organization = self.get_organization(event)
         if organization is not None:
@@ -166,12 +168,26 @@ class LinkedeventsImporter:
             'en': 'An unnamed organization',
         }
 
+        activity_type = 'Announce'
         summaries = {}
-        summary_texts = {
-            'fi': 'lisäsi tapahtuman',
-            'sv': 'skapade evenemanget',
-            'en': 'announced the event',
-        }
+
+        # TODO: The activity type is set to Update if there is a Story with the same id already in the system.
+        # This is just for proof of concept purposes.
+        if Story.objects.filter(external_id=event_id).exists():
+            activity_type = 'Update'
+
+        if activity_type == 'Announce':
+            summary_texts = {
+                'fi': 'lisäsi tapahtuman',
+                'sv': 'skapade evenemanget',
+                'en': 'announced the event',
+            }
+        elif activity_type == 'Update':
+            summary_texts = {
+                'fi': 'päivitti tapahtuman',
+                'sv': 'updated the event',
+                'en': 'updated the event',
+            }
 
         for language_code, _ in settings.LANGUAGES:
             used_org_name = ''
@@ -189,12 +205,12 @@ class LinkedeventsImporter:
         activity = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             'summaryMap': summaries,
-            'type': 'Announce',
+            'type': activity_type,
             'published': event['date_published'],
             'generator': 'https://api.hel.fi/linkedevents/v1/event',
             'actor': organization,
             'object': {
-                'id': 'https://id.hel.fi/event/' + event['id'],
+                'id': event_id,
                 'nameMap': event['name'],
                 'type': 'Event',
                 'tag': get_tags(event),

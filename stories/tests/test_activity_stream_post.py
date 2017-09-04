@@ -1,6 +1,9 @@
 import pytest
 from rest_framework.test import APIClient
 
+from stories.models import Story
+from stories.views import import_activity_stream
+
 
 class TestStory:
     client = APIClient()
@@ -19,8 +22,8 @@ class TestStory:
             'id': 'https://id.hel.fi/event/linkedevents:test-1234',
             'location': {
                 'type': 'Place',
-                'latitude': 25.08474,
-                'longitude': 60.243496,
+                'latitude': 60.243496,
+                'longitude': 25.08474,
                 'id': 'https://id.hel.fi/unit/tprek:1955',
                 'nameMap': {
                     'en': 'Kontula comprehensive service '
@@ -79,3 +82,36 @@ class TestStory:
         )
 
         assert response.status_code == 201
+
+    @pytest.mark.django_db
+    def test_import_activity_stream_locations(self, administrative_divisions):
+        story_as_activity_stream = import_activity_stream(self.story)
+
+        assert 'id' in story_as_activity_stream
+
+        story = Story.objects.get(pk=story_as_activity_stream['id'])
+
+        assert story.json == self.story
+
+        assert story.locations.filter().count() == 3
+        assert story.locations.filter(type__type='district').count() == 1
+
+        expected_ocd_id = 'ocd-division/country:fi/kunta:helsinki/peruspiiri:mellunkylä'
+
+        assert story.locations.filter(type__type='district').first().ocd_id == expected_ocd_id
+
+    @pytest.mark.django_db
+    def test_import_activity_stream_duplicate(self):
+        story_as_activity_stream = import_activity_stream(self.story)
+
+        assert 'id' in story_as_activity_stream
+
+        first_id = story_as_activity_stream['id']
+
+        story_as_activity_stream = import_activity_stream(self.story)
+
+        assert 'id' in story_as_activity_stream
+
+        second_id = story_as_activity_stream['id']
+
+        assert first_id == second_id

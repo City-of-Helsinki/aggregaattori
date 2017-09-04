@@ -27,6 +27,15 @@ def import_activity_streams(request):
 
 
 def import_activity_stream(data):
+    # Simple check for a duplicate activity
+    try:
+        existing_story = Story.objects.get(json=data)
+        return existing_story.as_activity_stream()
+    except Story.DoesNotExist:
+        pass
+
+    # TODO: Data validation
+
     story = Story()
 
     story.published = data['published']
@@ -45,16 +54,16 @@ def import_activity_stream(data):
     story.type = obj['type']
     map_translated(story, obj['nameMap'], 'name')
 
-    # For now we just get the location based on the point and assign the
-    # correct AdministrativeDivisions.
-    location = obj['location']
-    divisions = get_ocd_id(Point(location['longitude'], location['latitude']))
+    story.json = data
 
     story.save()
     # As locations and keywords are many-to-many relationships they need to be
     # set after saving.
 
-    for division in divisions:
+    # For now we just get the location based on the point and assign the
+    # correct AdministrativeDivisions.
+    for division in AdministrativeDivision.objects.filter(
+            geometry__boundary__contains=Point(obj['location']['longitude'], obj['location']['latitude'])):
         story.locations.add(division)
 
     for tag in obj['tag']:

@@ -6,6 +6,7 @@ import pytest
 
 from stories.importers import BaseAPIConsumer, LinkedeventsImporter
 from stories.importers.linkedevents import strip_format_parameter
+from stories.views import import_activity_stream
 
 
 class TestAPIConsumer(BaseAPIConsumer):
@@ -53,6 +54,33 @@ def test_multiple_linkedevent_importer():
     assert len(events) == 4
 
 
+@pytest.mark.django_db
+def test_activity_type_update():
+    importer = get_importer('stories/tests/linkedevents.single.json')
+    event = next(importer)
+
+    event['actor'] = {
+        'id': 'actor-1234',
+        'name': 'Test Actor',
+        'type': 'Organization',
+    }
+
+    import_activity_stream(event)
+
+    importer = get_importer('stories/tests/linkedevents.single.json')
+    event = next(importer)
+
+    expected_updated = get_expected_dict()
+    expected_updated['type'] = 'Update'
+    expected_updated['summaryMap'] = {
+        'en': 'An unnamed organization updated the event Lörem ipsum dölör sit ämåt',
+        'fi': 'Nimetön organisaatio päivitti tapahtuman Lörem ipsum dölör sit ämåt',
+        'sv': 'En namnlös organisation updated the event Lörem ipsum dölör sit ämåt'
+    }
+
+    assert event == expected_updated
+
+
 def get_expected_dict():
     return {
         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -95,8 +123,8 @@ def get_expected_dict():
                     'type': 'sub_district'
                 }],
                 'id': 'https://id.hel.fi/unit/tprek:1955',
-                'latitude': 25.08474,
-                'longitude': 60.243496,
+                'latitude': 60.243496,
+                'longitude': 25.08474,
                 'nameMap': {
                     'en': 'Kontula comprehensive service '
                           'centre / Service centre',
