@@ -105,7 +105,7 @@ class Story(TranslatableModel):
         # This project uses YSO for identifying keywords.
         # For more information see https://finto.fi/yso/en/
         params = {
-            'division': ','.join([l.ocd_id for l in self.locations.all()]),
+            'division': ','.join([l.ocd_id for l in self.locations.filter(type__type='district')]),
             'yso': ','.join([k.external_id for k in self.keywords.all()]),
         }
 

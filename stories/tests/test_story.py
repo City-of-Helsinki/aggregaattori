@@ -10,6 +10,7 @@ def test_get_interested_request_params(story_factory, keyword_factory):
     keyword2 = keyword_factory(name='Keyword1', external_id='kw:2')
 
     ad_type = AdministrativeDivisionType.objects.create(type='district', name='District')
+    ad_type2 = AdministrativeDivisionType.objects.create(type='rescue_area', name='Rescue Area')
 
     ad1 = AdministrativeDivision.objects.create(
         type=ad_type,
@@ -19,12 +20,16 @@ def test_get_interested_request_params(story_factory, keyword_factory):
         type=ad_type,
         ocd_id='ocd-division/country:fi/kunta:helsinki/peruspiiri:reijola'
     )
+    ad3 = AdministrativeDivision.objects.create(
+        type=ad_type2,
+        ocd_id='ocd-division/country:fi/kunta:helsinki/suojelupiiri:koillinen'
+    )
 
     story = story_factory(name='Test', type='Create', summary='Test Summary', content='Test Content',
                           url='http://www.example.com/test/', )
 
     story.keywords = [keyword1, keyword2]
-    story.locations = [ad1, ad2]
+    story.locations = [ad1, ad2, ad3]
 
     expected = {
         'division': 'ocd-division/country:fi/kunta:helsinki/peruspiiri:ullanlinna,'
@@ -32,7 +37,10 @@ def test_get_interested_request_params(story_factory, keyword_factory):
         'yso': 'kw:1,kw:2',
     }
 
-    assert story.get_interested_request_params() == expected
+    request_params = story.get_interested_request_params()
+
+    assert sorted(request_params['division'].split(',')) == sorted(expected['division'].split(','))
+    assert sorted(request_params['yso'].split(',')) == sorted(expected['yso'].split(','))
 
 
 @pytest.mark.django_db
