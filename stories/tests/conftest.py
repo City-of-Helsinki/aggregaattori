@@ -60,10 +60,12 @@ def sample_story_dict():
                     'sv': 'Gårdsbacka mångsidiga '
                           'servicecentral / Servicecentralen'
                 },
-                'divisions': ["ocd-division/country:fi/kunta:helsinki/osa-alue:kalasatama",
+                'divisions': [
+                    "ocd-division/country:fi/kunta:helsinki/osa-alue:kalasatama",
                     "ocd-division/country:fi/kunta:helsinki/kaupunginosa:sörnäinen",
                     "ocd-division/country:fi/kunta:helsinki/peruspiiri:kallio",
-                    "ocd-division/country:fi/kunta:helsinki"]
+                    "ocd-division/country:fi/kunta:helsinki"
+                ]
             },
             'nameMap': {
                 'fi': 'Lörem ipsum dölör sit ämåt'

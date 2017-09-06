@@ -1,4 +1,5 @@
-from jsonschema import validate, ValidationError as JsonSchemaValidationError
+from jsonschema import ValidationError as JsonSchemaValidationError
+from jsonschema import validate
 from rest_framework.exceptions import ValidationError as RestValidationError
 
 

@@ -1,12 +1,10 @@
-import json
-
 from parler_rest.fields import TranslatedFieldsField
 from parler_rest.serializers import TranslatableModelSerializer
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
 
-from .validators import ActivityStreamsValidator
 from .models import Story
+from .validators import ActivityStreamsValidator
 
 
 class StorySerializer(TranslatableModelSerializer):
