@@ -3,6 +3,7 @@ import json
 import requests
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from munigeo.models import AdministrativeDivision
@@ -100,6 +101,42 @@ class Story(TranslatableModel):
         return {
             'id': self.id,
         }
+
+    @staticmethod
+    def create_from_activity_stream(data):
+        def map_translated(instance, translations, attribute):
+            for language_code, value in translations.items():
+                instance.set_current_language(language_code)
+                setattr(instance, attribute, value)
+
+        story = Story()
+        story.json = data
+        story.generator = data['generator']
+        story.published = data['published']
+        map_translated(story, data['summaryMap'], 'summary')
+        story.type = data['type']
+
+        (actor, created) = Actor.objects.get_or_create(external_id=data['actor']['id'], name=data['actor']['name'],
+                                                       type=data['actor']['type'])
+        story.actor = actor
+
+        obj = data['object']
+        story.external_id = obj['id']
+        story.type = obj['type']
+        map_translated(story, obj['nameMap'], 'name')
+
+        story.save()
+
+        # For now we just get the location based on the point and assign the matching AdministrativeDivisions
+        story.locations = list(AdministrativeDivision.objects.filter(
+            geometry__boundary__contains=Point(obj['location']['longitude'], obj['location']['latitude'])))
+
+        for tag in obj['tag']:
+            (keyword, created) = Keyword.objects.get_or_create(external_id=tag['id'])
+            map_translated(keyword, tag['nameMap'], 'name')
+            story.keywords.add(keyword)
+
+        return story
 
     def get_interested_request_params(self):
         # This project uses YSO for identifying keywords.

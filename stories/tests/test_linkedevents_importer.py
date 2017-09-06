@@ -6,7 +6,7 @@ import pytest
 
 from stories.importers import BaseAPIConsumer, LinkedeventsImporter
 from stories.importers.linkedevents import strip_format_parameter
-from stories.views import import_activity_stream
+from stories.models import Story
 
 
 class TestAPIConsumer(BaseAPIConsumer):
@@ -65,7 +65,7 @@ def test_activity_type_update():
         'type': 'Organization',
     }
 
-    import_activity_stream(event)
+    Story.create_from_activity_stream(event)
 
     importer = get_importer('stories/tests/linkedevents.single.json')
     event = next(importer)
