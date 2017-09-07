@@ -1,6 +1,9 @@
-from parler_rest.serializers import (TranslatableModelSerializer,
-                                     TranslatedFieldsField)
-from rest_framework import mixins, routers, serializers, viewsets
+import collections
+
+from rest_framework import mixins, routers, status, viewsets
+from rest_framework.response import Response
+
+from stories.serializers import StoryActivityStreamsSerializer, StorySerializer
 
 from .models import Story
 
@@ -31,37 +34,34 @@ class APIRouter(routers.DefaultRouter):
             self._register_view(view)
 
 
-class StorySerializer(TranslatableModelSerializer):
-    translations = TranslatedFieldsField(
-        shared_model=Story,
-    )
-
-    external_id = serializers.CharField(
-        max_length=255,
-        allow_blank=False,
-        required=False,
-    )
-
-    class Meta:
-        model = Story
-        fields = (
-            'id',
-            'external_id',
-            'keywords',
-            'locations',
-            'type',
-            'generator',
-            'published',
-            'translations',
-        )
-
-
-class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
-                   mixins.UpdateModelMixin, mixins.DestroyModelMixin,
-                   mixins.ListModelMixin, viewsets.GenericViewSet):
-
+class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    activity_streams_serializer_class = StoryActivityStreamsSerializer
+
+    def create(self, request, *args, **kwargs):
+        many = False
+
+        if isinstance(request.data, collections.Sequence) and not isinstance(request.data, str):
+            many = True
+
+        serializer = self.get_serializer(data=request.data, many=many)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_serializer_class(self):
+        context = self.get_serializer_context()
+
+        format_query_param = self.settings.URL_FORMAT_OVERRIDE
+
+        if (context.get('format') == 'as2' or context['request'].query_params.get(format_query_param) == 'as2' or
+                context['request'].content_type == 'application/activity+json'):
+            return self.activity_streams_serializer_class
+
+        return self.serializer_class
 
 
 register_view(StoryViewSet, 'story')

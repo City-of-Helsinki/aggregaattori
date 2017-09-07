@@ -171,6 +171,19 @@ PARLER_LANGUAGES = {
 
 STATIC_URL = '/static/'
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'stories.renderers.ActivityStreamsRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'stories.parsers.ActivityStreamsParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser'
+    ),
+}
 
 # local_settings.py can be used to override environment-specific settings
 # like database and email that differ between development and production.

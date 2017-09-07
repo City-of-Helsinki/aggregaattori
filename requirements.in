@@ -19,3 +19,5 @@ django-modeltranslation
 
 # Municipalities
 -e git+git://github.com/City-of-Helsinki/django-munigeo.git#egg=django-munigeo
+
+jsonschema

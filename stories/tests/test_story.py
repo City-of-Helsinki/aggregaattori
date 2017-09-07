@@ -3,6 +3,22 @@ import uuid
 import pytest
 from munigeo.models import AdministrativeDivision, AdministrativeDivisionType
 
+from stories.models import Story
+
+
+@pytest.mark.django_db
+def test_create_from_activity_stream_locations(sample_story_dict, administrative_divisions):
+    story = Story.create_from_activity_stream(sample_story_dict)
+
+    assert story.json == sample_story_dict
+
+    assert story.locations.filter().count() == 3
+    assert story.locations.filter(type__type='district').count() == 1
+
+    expected_ocd_id = 'ocd-division/country:fi/kunta:helsinki/peruspiiri:mellunkylä'
+
+    assert story.locations.filter(type__type='district').first().ocd_id == expected_ocd_id
+
 
 @pytest.mark.django_db
 def test_get_interested_request_params(story_factory, keyword_factory):
