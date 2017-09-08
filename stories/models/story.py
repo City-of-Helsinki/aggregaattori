@@ -157,7 +157,8 @@ class Story(TranslatableModel):
         url = '%s/interested/' % (settings.TUNNISTAMO_URL)
         params = self.get_interested_request_params()
 
-        return requests.get(url, params=params).json()
+        return requests.get(url, params=params,
+                            auth=(settings.TUNNISTAMO_USERNAME, settings.TUNNISTAMO_PASSWORD)).json()
 
     def create_message(self, user_uuids):
         recipients = []
