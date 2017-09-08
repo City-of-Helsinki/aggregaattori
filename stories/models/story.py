@@ -96,12 +96,6 @@ class Story(TranslatableModel):
     def __unicode__(self):
         return self.title
 
-    def as_activity_stream(self):
-        # TODO figure out exactly what we want to return here
-        return {
-            'id': self.id,
-        }
-
     @staticmethod
     def create_from_activity_stream(data):
         def map_translated(instance, translations, attribute):
@@ -116,9 +110,10 @@ class Story(TranslatableModel):
         map_translated(story, data['summaryMap'], 'summary')
         story.type = data['type']
 
-        (actor, created) = Actor.objects.get_or_create(external_id=data['actor']['id'], name=data['actor']['name'],
-                                                       type=data['actor']['type'])
-        story.actor = actor
+        if data.get('actor'):
+            (actor, created) = Actor.objects.get_or_create(external_id=data['actor']['id'], name=data['actor']['name'],
+                                                           type=data['actor']['type'])
+            story.actor = actor
 
         obj = data['object']
         story.external_id = obj['id']
@@ -127,9 +122,19 @@ class Story(TranslatableModel):
 
         story.save()
 
-        # For now we just get the location based on the point and assign the matching AdministrativeDivisions
-        story.locations = list(AdministrativeDivision.objects.filter(
-            geometry__boundary__contains=Point(obj['location']['longitude'], obj['location']['latitude'])))
+        locations = set()
+
+        if obj.get('location', {}).get('longitude') and obj.get('location', {}).get('latitude'):
+            for administrative_division in AdministrativeDivision.objects.filter(
+                    geometry__boundary__contains=Point(obj['location']['longitude'], obj['location']['latitude'])):
+                locations.add(administrative_division)
+
+        if obj.get('location', {}).get('divisions'):
+            for administrative_division in AdministrativeDivision.objects.filter(
+                    ocd_id__in=obj.get('location', {}).get('divisions')):
+                locations.add(administrative_division)
+
+        story.locations = locations
 
         for tag in obj['tag']:
             (keyword, created) = Keyword.objects.get_or_create(external_id=tag['id'])

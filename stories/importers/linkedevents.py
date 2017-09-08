@@ -1,57 +1,13 @@
-# -*- coding: utf-8 -*-
-import datetime
 import logging
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 import pytz
 import requests
 from django.conf import settings
-from django.utils import timezone
 
 from stories.importers.base import BaseAPIConsumer
-from stories.models import ImportLog, Story
-
-
-def get_any_language(dictionary, preferred):
-    if dictionary is None:
-        return ''
-
-    if dictionary.get(preferred):
-        return dictionary.get(preferred)
-
-    for language_code, _ in settings.LANGUAGES:
-        if dictionary.get(language_code):
-            return dictionary.get(language_code)
-    return ''
-
-
-def safe_get(event, attribute, language_code):
-    field = event.get(attribute)
-
-    if field is None:
-        return None
-    return field.get(language_code)
-
-
-def strip_format_parameter(url):
-    if url is None:
-        return url
-
-    try:
-        parsed = urlparse(url)
-
-        query = parse_qs(parsed.query)
-        query.pop('format', None)
-        new_query = urlencode(query, True)
-
-        new_parts = list(parsed)
-        new_parts[4] = new_query
-
-        new_url = urlunparse(new_parts)
-
-        return new_url
-    except ValueError:
-        return url
+from stories.importers.utils import (get_any_language, get_last_modified,
+                                     strip_format_parameter)
+from stories.models import Story
 
 
 def get_tags(event):
@@ -62,19 +18,6 @@ def get_tags(event):
             'nameMap': keyword['name'],
         })
     return tags
-
-
-def get_last_modified():
-    latest = None
-    try:
-        latest = ImportLog.objects.filter(importer='LinkedEventsImporter').latest()
-    except ImportLog.DoesNotExist:
-        pass
-
-    if not latest:
-        return timezone.now() - datetime.timedelta(days=1)
-
-    return latest.import_time
 
 
 def get_location(event):
@@ -100,10 +43,17 @@ def get_location(event):
 class LinkedeventsAPIConsumer(BaseAPIConsumer):
     page_size = 100
 
+    def get_items_from_json(self, json_content):
+        return json_content.get('data')
+
+    def get_next_target_from_json(self, json_content):
+        return json_content.get('meta', {}).get('next')
+
     def __init__(self):
         # LinkedEvents expects time in Europe/Helsinki timezone without timezone information
-        last_modified_string = get_last_modified().astimezone(pytz.timezone('Europe/Helsinki')).strftime(
-            '%Y-%m-%dT%H:%M:%S')
+        last_modified_string = get_last_modified(
+            importer_name='LinkedEventsImporter', days=1).astimezone(pytz.timezone('Europe/Helsinki')).strftime(
+                '%Y-%m-%dT%H:%M:%S')
 
         self.target = (
             'https://api.hel.fi/linkedevents/v1/event/'
@@ -185,7 +135,7 @@ class LinkedeventsImporter:
         elif activity_type == 'Update':
             summary_texts = {
                 'fi': 'päivitti tapahtuman',
-                'sv': 'updated the event',
+                'sv': 'uppdaterade evenemanget',
                 'en': 'updated the event',
             }
 

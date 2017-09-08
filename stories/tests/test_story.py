@@ -12,12 +12,17 @@ def test_create_from_activity_stream_locations(sample_story_dict, administrative
 
     assert story.json == sample_story_dict
 
-    assert story.locations.filter().count() == 3
-    assert story.locations.filter(type__type='district').count() == 1
+    assert story.locations.filter().count() == 4
+    assert story.locations.filter(type__type='district').count() == 2
 
-    expected_ocd_id = 'ocd-division/country:fi/kunta:helsinki/peruspiiri:mellunkylä'
+    expected_ocd_ids = {
+        'ocd-division/country:fi/kunta:helsinki/peruspiiri:mellunkylä',
+        'ocd-division/country:fi/kunta:helsinki/peruspiiri:kallio',
+    }
 
-    assert story.locations.filter(type__type='district').first().ocd_id == expected_ocd_id
+    ocd_ids = set(story.locations.filter(type__type='district').values_list('ocd_id', flat=True))
+
+    assert ocd_ids == expected_ocd_ids
 
 
 @pytest.mark.django_db
