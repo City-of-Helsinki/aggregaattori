@@ -1,7 +1,7 @@
 {
     "meta": {
         "count": 3,
-        "next": "stories/tests/linkedevents.single.json",
+        "next": "stories/tests/fixtures/linkedevents.single.json",
         "previous": null
     },
     "data": [{

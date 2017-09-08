@@ -2,10 +2,14 @@ import requests
 
 
 class BaseAPIConsumer:
-
     target = None
-    meta = None
     items = []
+
+    def get_items_from_json(self, json_content):
+        raise NotImplementedError('get_items_from_json must be implemented')
+
+    def get_next_target_from_json(self, json_content):
+        raise NotImplementedError('get_next_target_from_json must be implemented')
 
     def fetch_items(self):
         return requests.get(url=self.target).json()
@@ -14,13 +18,12 @@ class BaseAPIConsumer:
         if self.target is None:
             raise StopIteration()
 
-        self.meta = json_content['meta']
-        self.items = json_content['data']
+        self.items = self.get_items_from_json(json_content)
 
-        if self.meta['count'] == 0:
+        if len(self.items) == 0:
             raise StopIteration()
 
-        self.target = self.meta['next']
+        self.target = self.get_next_target_from_json(json_content)
 
     def __iter__(self):
         return self
@@ -33,6 +36,8 @@ class BaseAPIConsumer:
             raise StopIteration()
 
         self.parse_items(self.fetch_items())
+
         if self.items:
             return self.items.pop(0)
+
         raise StopIteration()

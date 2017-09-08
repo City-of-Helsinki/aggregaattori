@@ -1,33 +1,29 @@
-# -*- coding: utf-8 -*-
-
 import json
 
 import pytest
 
-from stories.importers import BaseAPIConsumer, LinkedeventsImporter
-from stories.importers.linkedevents import strip_format_parameter
+from stories.importers.linkedevents import (LinkedeventsAPIConsumer,
+                                            LinkedeventsImporter,
+                                            strip_format_parameter)
 from stories.models import Story
 
 
-class TestAPIConsumer(BaseAPIConsumer):
-    """
-    This replaces the BaseAPIConsumer for tests.
-    Basically it reads from files instead of over the network.
-    """
+class LinkedeventsFileConsumer(LinkedeventsAPIConsumer):
     def fetch_items(self):
         return json.loads(open(self.target, 'r', encoding='utf8').read())
 
 
 def get_importer(filename):
     importer = LinkedeventsImporter()
-    importer.consumer = TestAPIConsumer()
+    importer.consumer = LinkedeventsFileConsumer()
     importer.consumer.target = filename
+
     return importer
 
 
 @pytest.mark.django_db
 def test_zero_linkedevent_importer():
-    importer = get_importer('stories/tests/linkedevents.empty.json')
+    importer = get_importer('stories/tests/fixtures/linkedevents.empty.json')
     events = []
     for event in importer:
         events.append(event)
@@ -37,7 +33,7 @@ def test_zero_linkedevent_importer():
 
 @pytest.mark.django_db
 def test_single_linkedevent_importer():
-    importer = get_importer('stories/tests/linkedevents.single.json')
+    importer = get_importer('stories/tests/fixtures/linkedevents.single.json')
 
     event = next(importer)
 
@@ -46,7 +42,7 @@ def test_single_linkedevent_importer():
 
 @pytest.mark.django_db
 def test_multiple_linkedevent_importer():
-    importer = get_importer('stories/tests/linkedevents.multiple.json')
+    importer = get_importer('stories/tests/fixtures/linkedevents.multiple.json')
     events = []
     for event in importer:
         events.append(event)
@@ -56,7 +52,7 @@ def test_multiple_linkedevent_importer():
 
 @pytest.mark.django_db
 def test_activity_type_update():
-    importer = get_importer('stories/tests/linkedevents.single.json')
+    importer = get_importer('stories/tests/fixtures/linkedevents.single.json')
     event = next(importer)
 
     event['actor'] = {
@@ -67,7 +63,7 @@ def test_activity_type_update():
 
     Story.create_from_activity_stream(event)
 
-    importer = get_importer('stories/tests/linkedevents.single.json')
+    importer = get_importer('stories/tests/fixtures/linkedevents.single.json')
     event = next(importer)
 
     expected_updated = get_expected_dict()
@@ -75,7 +71,7 @@ def test_activity_type_update():
     expected_updated['summaryMap'] = {
         'en': 'An unnamed organization updated the event Lörem ipsum dölör sit ämåt',
         'fi': 'Nimetön organisaatio päivitti tapahtuman Lörem ipsum dölör sit ämåt',
-        'sv': 'En namnlös organisation updated the event Lörem ipsum dölör sit ämåt'
+        'sv': 'En namnlös organisation uppdaterade evenemanget Lörem ipsum dölör sit ämåt'
     }
 
     assert event == expected_updated

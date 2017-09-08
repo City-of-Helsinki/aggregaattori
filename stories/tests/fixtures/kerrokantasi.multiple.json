@@ -1,0 +1,169 @@
+{
+  "count": 66,
+  "next": "https://api.hel.fi/kerrokantasi/v1/hearing/?limit=2&offset=2",
+  "previous": null,
+  "results": [
+    {
+      "abstract": {},
+      "id": "pjrjbnBdiOiVp0X5IwcO1MR2m8U0wIGm",
+      "n_comments": 33,
+      "published": true,
+      "labels": [
+        {
+          "id": 20,
+          "label": {
+            "fi": "Kadut"
+          }
+        },
+        {
+          "id": 21,
+          "label": {
+            "fi": "Puistot"
+          }
+        },
+        {
+          "id": 114,
+          "label": {
+            "fi": "ymp\u00e4rist\u00f6"
+          }
+        },
+        {
+          "id": 115,
+          "label": {
+            "fi": "hulevedet"
+          }
+        }
+      ],
+      "open_at": "2017-08-15T05:00:00Z",
+      "close_at": "2017-09-17T21:00:00Z",
+      "created_at": "2017-06-16T11:53:30.837588Z",
+      "servicemap_url": "",
+      "closed": false,
+      "organization": "Kaupunkisuunnitteluvirasto",
+      "slug": "hulevesi",
+      "main_image": {
+        "id": 166,
+        "url": "https://api.hel.fi/kerrokantasi/media/images/2017/06/hulevesi-edited_1.jpg",
+        "width": 980,
+        "height": 748,
+        "title": {},
+        "caption": {
+          "fi": "Hulevedell\u00e4 tarkoitetaan rakennetulla alueella maan pinnalta, rakennuksen katolta tai muilta vastaavilta pinnoilta pois johdettavaa sade- ja sulamisvett\u00e4. (Kuva: Arto Nyyss\u00f6nen)"
+        }
+      },
+      "contact_persons": [
+        {
+          "id": "23456",
+          "name": "Firstname Lastname",
+          "phone": "09 123 45678",
+          "email": "etunimi.sukunimi@hel.fi",
+          "organization": "Kaupunkisuunnitteluvirasto",
+          "title": {
+            "fi": "Puheenjohtaja"
+          }
+        },
+        {
+          "id": "456789",
+          "name": "Firstname Lastname",
+          "phone": "09 123 45678",
+          "email": "etunimi.sukunimi@hel.fi",
+          "organization": "Kaupunkimittausosasto",
+          "title": {
+            "fi": "Sihteeri"
+          }
+        }
+      ],
+      "default_to_fullscreen": false,
+      "title": {
+        "fi": "Miten hulevedet hallintaan ja hy\u00f6tyk\u00e4ytt\u00f6\u00f6n? Kerro mielipiteesi"
+      },
+      "borough": {}
+    },
+    {
+      "abstract": {
+        "fi": "Yli sata vuotta sotilassaarena toiminut Isosaari avautuu yleis\u00f6lle 10. kes\u00e4kuuta. Reilun puolen tunnin venematkan p\u00e4\u00e4ss\u00e4 Helsingin Kauppatorilta sijaitseva saari tarjoaa jo t\u00e4n\u00e4 kes\u00e4n\u00e4 monipuolisia matkailupalveluja."
+      },
+      "id": "3TFfl6aeikG4V2iIMsflL4eyTQn4Dwy1",
+      "n_comments": 48,
+      "published": true,
+      "labels": [
+        {
+          "id": 107,
+          "label": {
+            "fi": "Isosaari"
+          }
+        },
+        {
+          "id": 108,
+          "label": {
+            "fi": "matkailu"
+          }
+        },
+        {
+          "id": 109,
+          "label": {
+            "fi": "virkistys"
+          }
+        },
+        {
+          "id": 110,
+          "label": {
+            "fi": "saaristo"
+          }
+        },
+        {
+          "id": 111,
+          "label": {
+            "fi": "meri"
+          }
+        },
+        {
+          "id": 112,
+          "label": {
+            "fi": "luonto"
+          }
+        },
+        {
+          "id": 113,
+          "label": {
+            "fi": "kaavoitus"
+          }
+        }
+      ],
+      "open_at": "2017-06-09T05:00:00Z",
+      "close_at": "2017-09-04T21:00:00Z",
+      "created_at": "2017-06-05T15:02:37.630003Z",
+      "servicemap_url": "",
+      "closed": true,
+      "organization": "Kaupunkisuunnitteluvirasto",
+      "slug": "isosaari",
+      "main_image": {
+        "id": 165,
+        "url": "https://api.hel.fi/kerrokantasi/media/images/2017/06/isosaari-rgb.jpg",
+        "width": 893,
+        "height": 631,
+        "title": {},
+        "caption": {
+          "fi": "Millainen on tulevaisuuden Isosaari? Kuva: Kaupunkiymp\u00e4rist\u00f6n toimiala"
+        }
+      },
+      "contact_persons": [
+        {
+          "id": "12345abcdef",
+          "name": "Firstname Lastname",
+          "phone": "09 123 45678",
+          "email": "etunimi.sukunimi@hel.fi",
+          "organization": "Kaupunkisuunnitteluvirasto",
+          "title": {
+            "fi": "Arkkitehti"
+          }
+        }
+      ],
+      "default_to_fullscreen": false,
+      "title": {
+        "fi": "Ideoi Isosaaren tulevaisuutta"
+      },
+      "borough": {}
+    }
+  ]
+}

@@ -25,6 +25,8 @@ env = Env(
     EMAIL_AUTH_NAME=(str, ''),
     EMAIL_AUTH_PASS=(str, ''),
     TUNNISTAMO_URL=(str, ''),
+    TUNNISTAMO_USERNAME=(str, ''),
+    TUNNISTAMO_PASSWORD=(str, ''),
 )
 
 env_filename = os.path.join(BASE_DIR, '.env')
@@ -48,6 +50,8 @@ EMAIL_AUTH_PASS = env('EMAIL_AUTH_PASS')
 
 # User IDs are fetched from here
 TUNNISTAMO_URL = env('TUNNISTAMO_URL')
+TUNNISTAMO_USERNAME = env('TUNNISTAMO_USERNAME')
+TUNNISTAMO_PASSWORD = env('TUNNISTAMO_PASSWORD')
 
 # Application definition
 
