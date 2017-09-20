@@ -6,6 +6,7 @@ certifi==2017.4.17
 chardet==3.0.4
 django==1.11.5
 django-environ==0.4.3
+django-filter==1.0.4
 django-modeltranslation==0.12.1
 django-mptt==0.8.7
 -e git+git://github.com/City-of-Helsinki/django-munigeo.git#egg=django-munigeo

@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'parler',
     'modeltranslation',
+    'django_filters',
 
     # For handling municipalities data, especially administrative divisions
     # that are used by the API to determine location.
