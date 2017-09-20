@@ -1,5 +1,6 @@
 import collections
 
+from django_filters import rest_framework as filters
 from rest_framework import mixins, routers, status, viewsets
 from rest_framework.response import Response
 
@@ -34,9 +35,21 @@ class APIRouter(routers.DefaultRouter):
             self._register_view(view)
 
 
+class StoryFilterSet(filters.FilterSet, filters.BaseCSVFilter):
+    keywords = filters.CharFilter(name='keywords__external_id')
+
+    class Meta:
+        model = Story
+        fields = ['keywords']
+
+
 class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    filter_backends = (
+        filters.DjangoFilterBackend,
+    )
+    filter_class = StoryFilterSet
     activity_streams_serializer_class = StoryActivityStreamsSerializer
 
     def create(self, request, *args, **kwargs):
