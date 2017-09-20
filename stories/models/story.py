@@ -120,18 +120,25 @@ class Story(TranslatableModel):
         story.type = obj['type']
         map_translated(story, obj['nameMap'], 'name')
 
-        story.save()
-
         locations = set()
 
-        if obj.get('location', {}).get('longitude') and obj.get('location', {}).get('latitude'):
+        location = obj.get('location', {})
+
+        longitude = location.get('longitude')
+        latitude = location.get('latitude')
+
+        if longitude and latitude:
+            point = Point(longitude, latitude)
+            story.geometry = point
             for administrative_division in AdministrativeDivision.objects.filter(
-                    geometry__boundary__contains=Point(obj['location']['longitude'], obj['location']['latitude'])):
+                    geometry__boundary__contains=point):
                 locations.add(administrative_division)
 
-        if obj.get('location', {}).get('divisions'):
+        story.save()
+
+        if location.get('divisions'):
             for administrative_division in AdministrativeDivision.objects.filter(
-                    ocd_id__in=obj.get('location', {}).get('divisions')):
+                    ocd_id__in=location.get('divisions')):
                 locations.add(administrative_division)
 
         story.locations = locations
