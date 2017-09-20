@@ -3,6 +3,7 @@ import collections
 from django_filters import rest_framework as filters
 from rest_framework import mixins, routers, status, viewsets
 from rest_framework.response import Response
+from rest_framework_gis.filters import InBBoxFilter
 
 from stories.serializers import StoryActivityStreamsSerializer, StorySerializer
 
@@ -48,8 +49,11 @@ class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Li
     serializer_class = StorySerializer
     filter_backends = (
         filters.DjangoFilterBackend,
+        InBBoxFilter,
     )
     filter_class = StoryFilterSet
+    bbox_filter_field = 'geometry'
+    bbox_filter_include_overlapping = True
     activity_streams_serializer_class = StoryActivityStreamsSerializer
 
     def create(self, request, *args, **kwargs):
