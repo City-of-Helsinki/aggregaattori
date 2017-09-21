@@ -38,8 +38,8 @@ class APIRouter(routers.DefaultRouter):
 
 class StoryFilterSet(filters.FilterSet, filters.BaseCSVFilter):
     keywords = filters.CharFilter(name='keywords__external_id')
-    published_from = filters.IsoDateTimeFilter(name='published', lookup_expr='gt')
-    published_to = filters.IsoDateTimeFilter(name='published', lookup_expr='lt')
+    published_after = filters.IsoDateTimeFilter(name='published', lookup_expr='gt')
+    published_before = filters.IsoDateTimeFilter(name='published', lookup_expr='lt')
 
     class Meta:
         model = Story
