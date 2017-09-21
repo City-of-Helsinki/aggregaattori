@@ -1,7 +1,9 @@
 import collections
 
+from django_filters import rest_framework as filters
 from rest_framework import mixins, routers, status, viewsets
 from rest_framework.response import Response
+from rest_framework_gis.filters import InBBoxFilter
 
 from stories.serializers import StoryActivityStreamsSerializer, StorySerializer
 
@@ -34,9 +36,26 @@ class APIRouter(routers.DefaultRouter):
             self._register_view(view)
 
 
+class StoryFilterSet(filters.FilterSet, filters.BaseCSVFilter):
+    keywords = filters.CharFilter(name='keywords__external_id')
+    published_from = filters.IsoDateTimeFilter(name='published', lookup_expr='gt')
+    published_to = filters.IsoDateTimeFilter(name='published', lookup_expr='lt')
+
+    class Meta:
+        model = Story
+        fields = ['keywords', 'published']
+
+
 class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    filter_backends = (
+        filters.DjangoFilterBackend,
+        InBBoxFilter,
+    )
+    filter_class = StoryFilterSet
+    bbox_filter_field = 'geometry'
+    bbox_filter_include_overlapping = True
     activity_streams_serializer_class = StoryActivityStreamsSerializer
 
     def create(self, request, *args, **kwargs):
