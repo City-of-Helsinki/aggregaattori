@@ -38,10 +38,12 @@ class APIRouter(routers.DefaultRouter):
 
 class StoryFilterSet(filters.FilterSet, filters.BaseCSVFilter):
     keywords = filters.CharFilter(name='keywords__external_id')
+    published_from = filters.IsoDateTimeFilter(name='published', lookup_expr='gt')
+    published_to = filters.IsoDateTimeFilter(name='published', lookup_expr='lt')
 
     class Meta:
         model = Story
-        fields = ['keywords']
+        fields = ['keywords', 'published']
 
 
 class StoryViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
