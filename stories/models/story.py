@@ -122,7 +122,7 @@ class Story(TranslatableModel):
 
         locations = set()
 
-        location = obj.get('location', {})
+        location = obj.get('location') or {}
 
         longitude = location.get('longitude')
         latitude = location.get('latitude')
