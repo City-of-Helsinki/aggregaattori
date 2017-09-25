@@ -74,3 +74,40 @@ Run dev server:
 python manage.py runserver
 ```
 and open your browser to http://127.0.0.1:8000/admin/ using the admin user credentials.
+
+## Usage
+
+### Import stories
+
+To import stories you need to have the server running, then run the management command `./manage.py import_stories http://localhost:8000/v1/story/`.
+
+### Send stories
+
+This requires two other projects,
+[messaging](https://github.com/City-of-Helsinki/messaging) and
+[tunnistamo](https://github.com/City-of-Helsinki/tunnistamo), as well as adding
+the required enviroment variables in this projects `local_settings.py` file,
+for messaging:
+```
+EMAIL_FROM_NAME="John Doe"
+EMAIL_FROM_ADDRESS="john.doe@example.org"
+
+EMAIL_AUTH_NAME="messaging_name"
+EMAIL_AUTH_PASS="messaging_pass"
+```
+and for tunnistamo:
+```
+TUNNISTAMO_URL='http://localhost:8002'
+TUNNISTAMO_USERNAME='tunnistamo_name'
+TUNNISTAMO_PASSWORD='tunnistamo_pass'
+```
+
+After that, you can run messaging on port 8001 and tunnistamo on port 8002 in
+their respective virtual environments, with `./manage.py runserver
+localhost:8001` and `./manage.py runserver localhost:8002`.
+
+After that, back in this project, you can run
+```
+./manage.py send_stories localhost:8001
+```
+which should send the stories to messaging.
