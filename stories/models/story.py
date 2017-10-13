@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import JSONField
 from django.utils.translation import ugettext_lazy as _
 from munigeo.models import AdministrativeDivision
 from parler.models import TranslatableModel, TranslatedFields
+from requests import RequestException
 
 from .actor import Actor
 from .keyword import Keyword
@@ -154,8 +155,8 @@ class Story(TranslatableModel):
         # This project uses YSO for identifying keywords.
         # For more information see https://finto.fi/yso/en/
         params = {
-            'division': ','.join([l.ocd_id for l in self.locations.filter(type__type='district')]),
-            'yso': ','.join([k.external_id for k in self.keywords.all()]),
+            'division': [l.ocd_id for l in self.locations.filter(type__type='district')],
+            'yso': [k.external_id for k in self.keywords.all()],
         }
 
         return params
@@ -164,8 +165,15 @@ class Story(TranslatableModel):
         url = '%s/interested/' % (settings.TUNNISTAMO_URL)
         params = self.get_interested_request_params()
 
-        return requests.get(url, params=params,
-                            auth=(settings.TUNNISTAMO_USERNAME, settings.TUNNISTAMO_PASSWORD)).json()
+        try:
+            r = requests.post(url, data=params, auth=(settings.TUNNISTAMO_USERNAME, settings.TUNNISTAMO_PASSWORD))
+
+            r.raise_for_status()
+
+            return r.json()
+        except RequestException as e:
+            # TODO: Log error and try again later
+            return []
 
     def create_message(self, user_uuids):
         recipients = []
