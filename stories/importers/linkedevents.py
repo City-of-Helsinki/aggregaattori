@@ -50,10 +50,8 @@ class LinkedeventsAPIConsumer(BaseAPIConsumer):
         return json_content.get('meta', {}).get('next')
 
     def __init__(self):
-        # LinkedEvents expects time in Europe/Helsinki timezone without timezone information
-        last_modified_string = get_last_modified(
-            importer_name='LinkedEventsImporter', days=1).astimezone(pytz.timezone('Europe/Helsinki')).strftime(
-                '%Y-%m-%dT%H:%M:%S')
+        last_modified_string = get_last_modified(importer_name='LinkedEventsImporter', days=1).strftime(
+            '%Y-%m-%dT%H:%M:%SZ')
 
         self.target = (
             'https://api.hel.fi/linkedevents/v1/event/'
