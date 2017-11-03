@@ -53,15 +53,15 @@ def test_get_interested_request_params(story_factory, keyword_factory):
     story.locations = [ad1, ad2, ad3]
 
     expected = {
-        'division': 'ocd-division/country:fi/kunta:helsinki/peruspiiri:ullanlinna,'
-                    'ocd-division/country:fi/kunta:helsinki/peruspiiri:reijola',
-        'yso': 'kw:1,kw:2',
+        'division': ['ocd-division/country:fi/kunta:helsinki/peruspiiri:ullanlinna',
+                     'ocd-division/country:fi/kunta:helsinki/peruspiiri:reijola'],
+        'yso': ['kw:1', 'kw:2'],
     }
 
     request_params = story.get_interested_request_params()
 
-    assert sorted(request_params['division'].split(',')) == sorted(expected['division'].split(','))
-    assert sorted(request_params['yso'].split(',')) == sorted(expected['yso'].split(','))
+    assert sorted(request_params['division']) == sorted(expected['division'])
+    assert sorted(request_params['yso']) == sorted(expected['yso'])
 
 
 @pytest.mark.django_db

@@ -1,6 +1,5 @@
 import logging
 
-import pytz
 import requests
 from django.conf import settings
 
