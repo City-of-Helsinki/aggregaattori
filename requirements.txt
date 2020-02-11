@@ -2,25 +2,25 @@
 #
 #   prequ update
 #
+-e git+git://github.com/City-of-Helsinki/django-munigeo.git#egg=django-munigeo
 certifi==2017.4.17
 chardet==3.0.4
-django==1.11.5
 django-environ==0.4.3
 django-filter==1.0.4
 django-modeltranslation==0.12.1
 django-mptt==0.8.7
--e git+git://github.com/City-of-Helsinki/django-munigeo.git#egg=django-munigeo
-django-parler==1.8
 django-parler-rest==1.4.2
-djangorestframework==3.6.3
+django-parler==1.8
+django==1.11.28
 djangorestframework-gis==0.11.2
+djangorestframework==3.6.3
 idna==2.5
 jsonschema==2.6.0
 psycopg2==2.7.1
 python-dateutil==2.6.1
 pytz==2017.2
 pyyaml==3.12
-requests==2.18.4
 requests-cache==0.4.13
+requests==2.18.4
 six==1.10.0
 urllib3==1.22
